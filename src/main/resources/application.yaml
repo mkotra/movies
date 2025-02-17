@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: @project.name@
+    version: @project.version@
+  main:
+    banner-mode: "LOG"
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/movies_db
+    username: user
+    password: secret
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true # This logs the SQL queries.
+    properties:
+      hibernate:
+        format_sql: true # Format the SQL for better readability.
+    # Enable logging of Hibernate query parameters (optional but useful)
+    logging:
+      level:
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db.changelog-master.yaml
+
+management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+spring-doc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    use-root-path: true

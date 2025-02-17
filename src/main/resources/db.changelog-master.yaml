@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: mkotra
+      changes:
+        - createTable:
+            tableName: movies
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+              - column:
+                  name: year
+                  type: varchar(4)
+
+        - createTable:
+            tableName: actors
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+
+        - createTable:
+            tableName: appearances
+            columns:
+              - column:
+                  name: movie_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: actor_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: appearance_character
+                  type: varchar(255)
+
+        - addPrimaryKey:
+            tableName: appearances
+            columnNames: movie_id, actor_id
+            constraintName: pk_appearances
+
+        - addForeignKeyConstraint:
+            baseTableName: appearances
+            baseColumnNames: movie_id
+            referencedTableName: movies
+            referencedColumnNames: id
+            constraintName: fk_appearances_movies
+
+        - addForeignKeyConstraint:
+            baseTableName: appearances
+            baseColumnNames: actor_id
+            referencedTableName: actors
+            referencedColumnNames: id
+            constraintName: fk_appearances_actors

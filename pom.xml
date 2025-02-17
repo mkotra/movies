@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.4.2</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>pl.mkotra</groupId>
+	<artifactId>movies</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>movies</name>
+	<description>Movies</description>
+
+
+	<properties>
+		<java.version>23</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+
+		<mmariadb.version>3.1.0</mmariadb.version>
+		<springdoc.version>2.8.4</springdoc.version>
+		<testcontainers.version>1.20.4</testcontainers.version>
+		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+
+		<maven.build.helper.plugin.version>3.5.0</maven.build.helper.plugin.version>
+		<maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+		<maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
+		<maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+		<maven.jacoco.plugin.version>0.8.12</maven.jacoco.plugin.version>
+		<maven.git-commit-id.plugin.version>8.0.2</maven.git-commit-id.plugin.version>
+		<maven.versions.plugin.version>2.16.2</maven.versions.plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>${mariadb.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>mariadb</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${maven.build.helper.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/integration-test/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>properties</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>7.11.0</version>
+
+				<executions>
+					<execution>
+						<id>generate-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/api-spec.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<output>${project.build.directory}/generated-sources</output>
+							<apiPackage>pl.mkotra.movies.api</apiPackage>
+							<modelPackage>pl.mkotra.movies.model</modelPackage>
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<useSpringBoot3>true</useSpringBoot3>
+								<openApiNullable>false</openApiNullable>
+								<skipDefaultInterface>true</skipDefaultInterface>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.plugin.version}</version>
+				<configuration>
+					<argLine>-XX:+EnableDynamicAgentLoading -javaagent:${org.mockito:mockito-core:jar} ${surefire.jacoco.args}</argLine>
+					<includes>
+						<include>**/*Test.class</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven.failsafe.plugin.version}</version>
+				<configuration>
+					<argLine>-XX:+EnableDynamicAgentLoading -javaagent:${org.mockito:mockito-core:jar} ${failsafe.jacoco.args}</argLine>
+					<includes>
+						<include>**/*IT.class</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${maven.jacoco.plugin.version}</version>
+				<executions>
+					<!-- Unit test (surefire) report configuration -->
+					<execution>
+						<id>before-unit-test-execution</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-unit-tests.exec</destFile>
+							<propertyName>surefire.jacoco.args</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>after-unit-test-execution</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/jacoco-unit-tests.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-unit-test-coverage-report
+							</outputDirectory>
+						</configuration>
+					</execution>
+
+					<!-- Integration test (failsafe) report configuration -->
+					<execution>
+						<id>before-integration-test-execution</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-integration-tests.exec</destFile>
+							<propertyName>failsafe.jacoco.args</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>after-integration-test-execution</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/jacoco-integration-tests.exec</dataFile>
+							<outputDirectory>
+								${project.reporting.outputDirectory}/jacoco-integration-test-coverage-report
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
