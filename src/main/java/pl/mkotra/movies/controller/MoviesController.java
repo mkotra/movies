@@ -2,6 +2,7 @@ package pl.mkotra.movies.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.mkotra.movies.api.MoviesApi;
 import pl.mkotra.movies.core.MovieService;
@@ -21,7 +22,7 @@ class MoviesController implements MoviesApi {
     }
 
     @Override
-    public ResponseEntity<List<Movie>> moviesGet(Integer page, Integer pageSize, String name) {
+    public ResponseEntity<List<Movie>> moviesGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "") String name) {
         Page<Movie> actorPage = moviesService.getMovies(name, page, pageSize);
 
         return ResponseEntity.ok()

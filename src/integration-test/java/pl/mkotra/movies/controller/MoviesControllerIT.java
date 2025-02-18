@@ -44,6 +44,17 @@ class MoviesControllerIT extends BaseIT {
     }
 
     @Test
+    void moviesGetWithMissingNameReturnsValidResponse() throws Exception {
+        mockMvc.perform(get("/movies")
+                        .with(httpBasic(USER, PASSWORD))
+                        .param("page", "0")
+                        .param("pageSize", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string("X-Total-Size", "2"));
+    }
+
+    @Test
     void moviesGetReturnsUnauthorized() throws Exception {
         mockMvc.perform(get("/movies"))
                 .andExpect(status().isUnauthorized());
