@@ -78,6 +78,8 @@ http://localhost:8080/actuator/prometheus
 
 ### Exploring API
 - Please use **SwaggerUI**
-- First populate some random data into database **populate data API**
+- **Authorize** - please check application.yaml security section to obtain credentials.
+- Populate some random data into database **populate data API**
+- Start using actors API and movies API
 
 [![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
