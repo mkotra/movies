@@ -15,9 +15,11 @@ import java.util.Optional;
 @Service
 public class MovieService {
 
+    private static final Sort SORT = Sort.by(Sort.Direction.ASC, "title");
+
     private final MovieRepository movieRepository;
 
-    public MovieService(MovieRepository movieRepository) {
+    MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
 
@@ -27,7 +29,7 @@ public class MovieService {
 
     public Page<Movie> getMovies(String title, Integer pageNumber, Integer pageSize) {
 
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "title"));
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, SORT);
         Page<MovieDB> movieDBPage = movieRepository.findByTitleContaining(title, pageRequest);
 
         List<Movie> actors = movieDBPage.getContent().stream()

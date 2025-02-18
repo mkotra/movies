@@ -27,6 +27,7 @@ class MoviesControllerIT extends BaseIT {
     void moviesGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/movies")
+                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass"))
                         .param("name", "The")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -47,9 +48,16 @@ class MoviesControllerIT extends BaseIT {
     }
 
     @Test
+    void moviesGetReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/movies"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void moviesIdGetReturnsValidResponse() throws Exception {
 
-        mockMvc.perform(get("/movies/{id}", 1))
+        mockMvc.perform(get("/movies/{id}", 1)
+                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(is(1)))
@@ -59,8 +67,16 @@ class MoviesControllerIT extends BaseIT {
 
     @Test
     void moviesIdGetReturnsNotFound() throws Exception {
-        mockMvc.perform(get("/movies/{id}", 12345))
+        mockMvc.perform(get("/movies/{id}", 12345)
+                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    void moviesIdGetReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/movies/{id}", 1))
+                .andExpect(status().isUnauthorized());
     }
 }

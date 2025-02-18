@@ -19,8 +19,8 @@ public class AppearanceDB {
     @JoinColumn(name = "actor_id", nullable = false)
     private ActorDB actor;
 
-    @Column(name = "appearance_character")
-    private String character;
+    @Column(name = "character_name")
+    private String characterName;
 
     public AppearanceDBId getId() {
         return id;
@@ -46,11 +46,11 @@ public class AppearanceDB {
         this.actor = actor;
     }
 
-    public String getCharacter() {
-        return character;
+    public String getCharacterName() {
+        return characterName;
     }
 
-    public void setCharacter(String character) {
-        this.character = character;
+    public void setCharacterName(String characterName) {
+        this.characterName = characterName;
     }
 }

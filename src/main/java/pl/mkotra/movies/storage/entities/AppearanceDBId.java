@@ -10,13 +10,6 @@ public class AppearanceDBId implements Serializable {
     private int movieId;
     private int actorId;
 
-    public AppearanceDBId() {}
-
-    public AppearanceDBId(int movieId, int actorId) {
-        this.movieId = movieId;
-        this.actorId = actorId;
-    }
-
     public int getMovieId() {
         return movieId;
     }

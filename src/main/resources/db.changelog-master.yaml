@@ -46,7 +46,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: appearance_character
+                  name: character_name
                   type: varchar(255)
 
         - addPrimaryKey:

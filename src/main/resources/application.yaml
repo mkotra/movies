@@ -15,19 +15,29 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
-    show-sql: true # This logs the SQL queries.
+    show-sql: true
     properties:
       hibernate:
-        format_sql: true # Format the SQL for better readability.
-    # Enable logging of Hibernate query parameters (optional but useful)
-    logging:
-      level:
-        org.hibernate.SQL: DEBUG
-        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+        format_sql: true
 
   liquibase:
     enabled: true
     change-log: classpath:/db.changelog-master.yaml
+
+  security:
+    users:
+      - username: user1
+        password: pass
+        roles:
+          - USER
+      - username: user2
+        password: pass
+        roles:
+          - USER
+      - username: user3
+        password: pass
+        roles:
+          - USER
 
 management:
   endpoint:

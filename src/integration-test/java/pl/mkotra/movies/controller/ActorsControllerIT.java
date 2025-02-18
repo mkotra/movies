@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class ActorsControllerIT extends BaseIT {
 
@@ -22,13 +21,14 @@ class ActorsControllerIT extends BaseIT {
     void setupDatabase() {
         jdbcTemplate.execute("INSERT INTO movies (id, title, year) VALUES (1, 'Inception', '2010');");
         jdbcTemplate.execute("INSERT INTO actors (id, name) VALUES (2, 'Leonardo DiCaprio');");
-        jdbcTemplate.execute("INSERT INTO appearances(movie_id, actor_id, appearance_character ) VALUES(1, 2, 'Cobb');");
+        jdbcTemplate.execute("INSERT INTO appearances(movie_id, actor_id, character_name ) VALUES(1, 2, 'Cobb');");
     }
 
     @Test
     void actorsGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/actors")
+                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass"))
                         .param("name", "Leonardo DiCaprio")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -45,8 +45,16 @@ class ActorsControllerIT extends BaseIT {
     }
 
     @Test
+    void actorsGetReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/actors"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void actorsIdAppearancesGetReturnsValidResponse() throws Exception {
         mockMvc.perform(get("/actors/{id}/appearances", 2)
+                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass"))
                         .param("page", "0")
                         .param("pageSize", "10"))
                 .andDo(print())
@@ -63,9 +71,17 @@ class ActorsControllerIT extends BaseIT {
     }
 
     @Test
+    void actorsIdAppearancesGetReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/actors/{id}/appearances", 2))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void actorsIdGetReturnsValidResponse() throws Exception {
 
-        mockMvc.perform(get("/actors/{id}", 2))
+        mockMvc.perform(get("/actors/{id}", 2)
+                .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(is(2)))
@@ -74,8 +90,16 @@ class ActorsControllerIT extends BaseIT {
 
     @Test
     void actorsIdGetReturnsNotFound() throws Exception {
-        mockMvc.perform(get("/actors/{id}", 12345))
+        mockMvc.perform(get("/actors/{id}", 12345)
+                .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void actorsIdGetReturnsUnauthorized() throws Exception {
+        mockMvc.perform(get("/actors/{id}", 12345))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }

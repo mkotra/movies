@@ -1,9 +1,6 @@
 package pl.mkotra.movies.core;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import pl.mkotra.movies.model.Actor;
 import pl.mkotra.movies.model.Appearance;
@@ -11,13 +8,16 @@ import pl.mkotra.movies.storage.ActorRepository;
 import pl.mkotra.movies.storage.AppearanceRepository;
 import pl.mkotra.movies.storage.entities.ActorDB;
 import pl.mkotra.movies.storage.entities.AppearanceDB;
-import pl.mkotra.movies.storage.entities.MovieDB;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ActorService {
+
+    private static final Sort ACTORS_SORT = Sort.by(Sort.Direction.ASC, "name");
+    private static final Sort APPEARANCES_SORT = Sort.by(Sort.Direction.ASC, "movie.title");
 
     private final ActorRepository actorRepository;
     private final AppearanceRepository appearanceRepository;
@@ -33,7 +33,7 @@ public class ActorService {
 
     public Page<Actor> getActors(String name, Integer pageNumber, Integer pageSize) {
 
-        Page<ActorDB> actorDBPage = actorRepository.findByName(name, PageRequest.of(pageNumber, pageSize));
+        Page<ActorDB> actorDBPage = actorRepository.findByName(name, PageRequest.of(pageNumber, pageSize, ACTORS_SORT));
 
         List<Actor> actors = actorDBPage.getContent().stream()
                 .map(ActorMapper.INSTANCE::map)
@@ -43,22 +43,15 @@ public class ActorService {
     }
 
     public Page<Appearance> getAppearances(Integer actorId, Integer pageNumber, Integer pageSize) {
-        //TODO: handle
-        ActorDB actorDB = actorRepository.findById(actorId).orElse(null);
-
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "movie.title"));
-        Page<AppearanceDB> appearancesDB = appearanceRepository.findAppearanceByActor(actorDB, pageRequest);
-
-        List<Appearance> appearances = appearancesDB.getContent().stream()
-                .map(appearanceDB -> {
-                    Appearance appearance = new Appearance();
-                    MovieDB movieDB = appearanceDB.getMovie();
-                    appearance.setMovieId(movieDB.getId());
-                    appearance.setMovieName(movieDB.getTitle());
-                    appearance.setCharacterName(appearanceDB.getCharacter());
-                    return appearance;
-                }).toList();
-
-        return new PageImpl<>(appearances, appearancesDB.getPageable(), appearancesDB.getTotalElements());
+        return actorRepository.findById(actorId)
+                .map(actorDB -> {
+                    PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, APPEARANCES_SORT);
+                    Page<AppearanceDB> appearancesDB = appearanceRepository.findAppearanceByActor(actorDB, pageRequest);
+                    List<Appearance> appearances = appearancesDB.getContent().stream()
+                            .map(AppearanceMapper.INSTANCE::map)
+                            .toList();
+                    return new PageImpl<>(appearances, appearancesDB.getPageable(), appearancesDB.getTotalElements());
+                })
+                .orElseGet(() -> new PageImpl<>(Collections.emptyList(), Pageable.ofSize(pageSize), 0));
     }
 }

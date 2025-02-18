@@ -1,8 +1,6 @@
 package pl.mkotra.movies;
 
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,12 +28,9 @@ public abstract class BaseIT {
     @Autowired
     protected MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
+    protected String encodeCredentials(String username, String password) {
+        String auth = username + ":" + password;
+        return new String(java.util.Base64.getEncoder().encode(auth.getBytes()));
     }
 
     @DynamicPropertySource
