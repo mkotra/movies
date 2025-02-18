@@ -27,7 +27,7 @@ class ActorsControllerIT extends BaseIT {
                         .with(httpBasic(USER, PASSWORD))
                         .param("name", "Leonardo DiCaprio")
                         .param("page", "0")
-                        .param("pageSize", "10"))
+                        .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Size", "1"))
@@ -45,10 +45,20 @@ class ActorsControllerIT extends BaseIT {
         mockMvc.perform(get("/actors")
                         .with(httpBasic(USER, PASSWORD))
                         .param("page", "0")
-                        .param("pageSize", "10"))
+                        .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Size", "1"));
+    }
+
+    @Test
+    void actorsGetWithInvalidPageSizeReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/actors")
+                        .with(httpBasic(USER, PASSWORD))
+                        .param("page", "0")
+                        .param("page_size", "1001"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -63,7 +73,7 @@ class ActorsControllerIT extends BaseIT {
         mockMvc.perform(get("/actors/{id}/appearances", 2)
                         .with(httpBasic(USER, PASSWORD))
                         .param("page", "0")
-                        .param("pageSize", "10"))
+                        .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Size", "1"))
@@ -75,6 +85,16 @@ class ActorsControllerIT extends BaseIT {
                 .andExpect(jsonPath("$[0].movie_id").value(is(1)))
                 .andExpect(jsonPath("$[0].movie_name").value(is("Inception")))
                 .andExpect(jsonPath("$[0].character_name").value(is("Cobb")));
+    }
+
+    @Test
+    void actorsIdAppearancesGetWithInvalidPageSizeReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/actors/{id}/appearances", 2)
+                        .with(httpBasic(USER, PASSWORD))
+                        .param("page", "0")
+                        .param("page_size", "1001"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test

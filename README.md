@@ -20,7 +20,6 @@ improvements.
 Due to limited time for the task I did not manage to implement:
 - **Load the data from tsv files** - only some random data for now.
 - **WebUI** - I was planning to provide maybe some simple Angular based Web UI, but only managed to provide SwaggerUI.
-- **Maximum pageSize = 1000** validation - it was mentioned in the requirements.
 - **Custom Micrometer Metrics** - there are only defaults provided by Spring.
 
 ## Prerequisites

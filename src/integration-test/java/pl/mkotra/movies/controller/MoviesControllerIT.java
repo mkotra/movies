@@ -26,7 +26,7 @@ class MoviesControllerIT extends BaseIT {
                         .with(httpBasic(USER, PASSWORD))
                         .param("name", "The")
                         .param("page", "0")
-                        .param("pageSize", "10"))
+                        .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Size", "2"))
@@ -48,10 +48,20 @@ class MoviesControllerIT extends BaseIT {
         mockMvc.perform(get("/movies")
                         .with(httpBasic(USER, PASSWORD))
                         .param("page", "0")
-                        .param("pageSize", "10"))
+                        .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Total-Size", "2"));
+    }
+
+    @Test
+    void moviesGetWithInvalidPageSizeReturnsBadRequest() throws Exception {
+        mockMvc.perform(get("/movies")
+                        .with(httpBasic(USER, PASSWORD))
+                        .param("page", "0")
+                        .param("page_size", "1001"))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
