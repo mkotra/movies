@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "rate-limiter")
-class RateLimiterProperties {
+public class RateLimiterProperties {
 
     private int maxRequests;
     private long timeWindow;

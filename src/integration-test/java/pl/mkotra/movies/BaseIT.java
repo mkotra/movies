@@ -41,7 +41,7 @@ public abstract class BaseIT {
     }
 
     @DynamicPropertySource
-    static void testProperties(DynamicPropertyRegistry registry) {
+    public static void testProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", MARIADB::getJdbcUrl);
         registry.add("spring.datasource.username", MARIADB::getUsername);
         registry.add("spring.datasource.password", MARIADB::getPassword);

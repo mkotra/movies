@@ -6,6 +6,7 @@ import pl.mkotra.movies.BaseIT;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,7 +23,7 @@ class MoviesControllerIT extends BaseIT {
     void moviesGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/movies")
-                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD))
+                        .with(httpBasic(USER, PASSWORD))
                         .param("name", "The")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -52,7 +53,7 @@ class MoviesControllerIT extends BaseIT {
     void moviesIdGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/movies/{id}", 1)
-                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD)))
+                        .with(httpBasic(USER, PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(is(1)))
@@ -63,7 +64,7 @@ class MoviesControllerIT extends BaseIT {
     @Test
     void moviesIdGetReturnsNotFound() throws Exception {
         mockMvc.perform(get("/movies/{id}", 12345)
-                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD)))
+                        .with(httpBasic(USER, PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
