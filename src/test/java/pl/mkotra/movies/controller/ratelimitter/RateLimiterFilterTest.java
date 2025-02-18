@@ -1,5 +1,7 @@
 package pl.mkotra.movies.controller.ratelimitter;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,15 +25,18 @@ class RateLimiterFilterTest {
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
+    private MeterRegistry meterRegistry;
     private PrintWriter writer;
 
     @BeforeEach
     void setUp() throws IOException {
+
         RateLimiterProperties rateLimiterProperties = mock(RateLimiterProperties.class);
         when(rateLimiterProperties.getMaxRequests()).thenReturn(5);
         when(rateLimiterProperties.getTimeWindow()).thenReturn(TimeUnit.MINUTES.toMillis(1));
+        meterRegistry = mock(MeterRegistry.class);
 
-        rateLimiterFilter = new RateLimiterFilter(rateLimiterProperties);
+        rateLimiterFilter = new RateLimiterFilter(rateLimiterProperties, meterRegistry);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -53,6 +58,9 @@ class RateLimiterFilterTest {
         userRequest.setLastRequestTime(System.currentTimeMillis() - 1000);
         rateLimiterFilter.getUserRequests().put("user", userRequest);
 
+        Counter mockCounter = mock(Counter.class);
+        when(meterRegistry.counter(anyString(), any(String[].class))).thenReturn(mockCounter);
+
         //when
         rateLimiterFilter.doFilterInternal(request, response, filterChain);
 
@@ -60,6 +68,7 @@ class RateLimiterFilterTest {
         assertThat(userRequest.getRequestCount()).isEqualTo(5);
         verify(response).setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         verify(writer).write("Too many requests for user user - please try again later.");
+        verify(meterRegistry).counter(anyString(), any(String[].class));
     }
 
     @Test
