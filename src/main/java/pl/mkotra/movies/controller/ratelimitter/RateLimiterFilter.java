@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,10 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimiterFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(RateLimiterFilter.class);
 
     private final RateLimiterProperties rateLimiterProperties;
     private final ConcurrentHashMap<String, UserRequest> userRequests = new ConcurrentHashMap<>();
@@ -34,18 +39,16 @@ public class RateLimiterFilter extends OncePerRequestFilter {
         long timeWindowMs = rateLimiterProperties.getTimeWindow();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        String username = Optional.ofNullable(authentication.getName()).orElse("anonymousUser");
 
-        String username = authentication.getName();
         UserRequest userRequest = userRequests.getOrDefault(username, new UserRequest());
         long currentTime = System.currentTimeMillis();
 
         if (userRequest.getRequestCount() >= maxRequestsPerTimeWindow && currentTime - userRequest.getLastRequestTime() < timeWindowMs) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.getWriter().write("Too many requests. Please try again later.");
+            String message = "Too many requests for user " + username + " - please try again later.";
+            response.getWriter().write(message);
+            logger.warn(message);
             return;
         }
 
@@ -57,5 +60,11 @@ public class RateLimiterFilter extends OncePerRequestFilter {
         userRequests.put(username, userRequest);
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    public boolean shouldNotFilter(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return !(requestURI.startsWith("/movies") || requestURI.startsWith("/actors"));
     }
 }

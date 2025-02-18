@@ -41,18 +41,6 @@ class RateLimiterFilterTest {
     }
 
     @Test
-    void doFilterInternal_whenUserIsNotAuthenticated() throws ServletException, IOException {
-        //given
-        SecurityContextHolder.getContext().setAuthentication(null);
-
-        //when
-        rateLimiterFilter.doFilterInternal(request, response, filterChain);
-
-        //then
-        verify(filterChain).doFilter(request, response);
-    }
-
-    @Test
     void doFilterInternal_whenRateLimitIsExceeded() throws ServletException, IOException {
         //given
         Authentication authentication = mock(Authentication.class);
@@ -71,7 +59,7 @@ class RateLimiterFilterTest {
         //then
         assertThat(userRequest.getRequestCount()).isEqualTo(5);
         verify(response).setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-        verify(writer).write("Too many requests. Please try again later.");
+        verify(writer).write("Too many requests for user user - please try again later.");
     }
 
     @Test
