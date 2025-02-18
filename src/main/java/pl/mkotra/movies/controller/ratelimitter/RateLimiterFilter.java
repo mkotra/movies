@@ -1,5 +1,6 @@
 package pl.mkotra.movies.controller.ratelimitter;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +23,12 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(RateLimiterFilter.class);
 
     private final RateLimiterProperties rateLimiterProperties;
+    private final MeterRegistry meterRegistry;
     private final ConcurrentHashMap<String, UserRequest> userRequests = new ConcurrentHashMap<>();
 
-    RateLimiterFilter(RateLimiterProperties rateLimiterProperties) {
+    RateLimiterFilter(RateLimiterProperties rateLimiterProperties, MeterRegistry meterRegistry) {
         this.rateLimiterProperties = rateLimiterProperties;
+        this.meterRegistry = meterRegistry;
     }
 
     public ConcurrentHashMap<String, UserRequest> getUserRequests() {
@@ -49,6 +52,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
             String message = "Too many requests for user " + username + " - please try again later.";
             response.getWriter().write(message);
             logger.warn(message);
+            meterRegistry.counter("rate_limited_request_count").increment();
             return;
         }
 
