@@ -1,11 +1,13 @@
 package pl.mkotra.movies.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "populate-data", description = "the populate-data API")
 @RestController("/populate-data")
-public class PopulateDataController {
+class PopulateDataController {
 
     private final JdbcTemplate jdbcTemplate;
 
