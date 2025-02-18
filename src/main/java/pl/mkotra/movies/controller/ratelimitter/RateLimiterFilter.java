@@ -2,18 +2,18 @@ package pl.mkotra.movies.controller.ratelimitter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-@WebFilter("/*")
+@Component
 public class RateLimiterFilter extends OncePerRequestFilter {
 
     private final RateLimiterProperties rateLimiterProperties;
@@ -30,7 +30,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        int maxRequestsPerMinute = rateLimiterProperties.getMaxRequests();
+        int maxRequestsPerTimeWindow = rateLimiterProperties.getMaxRequests();
         long timeWindowMs = rateLimiterProperties.getTimeWindow();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -43,7 +43,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
         UserRequest userRequest = userRequests.getOrDefault(username, new UserRequest());
         long currentTime = System.currentTimeMillis();
 
-        if (userRequest.getRequestCount() >= maxRequestsPerMinute && currentTime - userRequest.getLastRequestTime() < timeWindowMs) {
+        if (userRequest.getRequestCount() >= maxRequestsPerTimeWindow && currentTime - userRequest.getLastRequestTime() < timeWindowMs) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.getWriter().write("Too many requests. Please try again later.");
             return;

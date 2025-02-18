@@ -59,7 +59,7 @@ class ActorServiceTest {
         Page<ActorDB> mockResult = mock(Page.class);
         Pageable mockPageable = mock(Pageable.class);
         when(mockResult.getPageable()).thenReturn(mockPageable);
-        when(actorRepository.findByName(eq(name), any(Pageable.class))).thenReturn(mockResult);
+        when(actorRepository.findByNameContaining(eq(name), any(Pageable.class))).thenReturn(mockResult);
 
         //when
         Page<Actor> result = actorService.getActors("name", pageNumber, pageSize);
@@ -73,7 +73,7 @@ class ActorServiceTest {
                 });
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(actorRepository).findByName(eq("name"), pageableCaptor.capture());
+        verify(actorRepository).findByNameContaining(eq("name"), pageableCaptor.capture());
 
         Pageable capturedPageable = pageableCaptor.getValue();
         assertThat(capturedPageable).isNotNull();

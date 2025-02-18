@@ -48,7 +48,8 @@ class SecurityConfiguration {
                                 .requestMatchers("/**")
                                 .hasRole("USER")
                                 .anyRequest()
-                                .denyAll())
+                                .denyAll()
+                )
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

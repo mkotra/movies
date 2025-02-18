@@ -23,7 +23,7 @@ class ActorsControllerIT extends BaseIT {
     void actorsGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/actors")
-                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass"))
+                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD))
                         .param("name", "Leonardo DiCaprio")
                         .param("page", "0")
                         .param("pageSize", "10"))
@@ -49,7 +49,7 @@ class ActorsControllerIT extends BaseIT {
     @Test
     void actorsIdAppearancesGetReturnsValidResponse() throws Exception {
         mockMvc.perform(get("/actors/{id}/appearances", 2)
-                        .header("Authorization", "Basic " + encodeCredentials("user1", "pass"))
+                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD))
                         .param("page", "0")
                         .param("pageSize", "10"))
                 .andDo(print())
@@ -76,7 +76,7 @@ class ActorsControllerIT extends BaseIT {
     void actorsIdGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/actors/{id}", 2)
-                .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
+                .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(is(2)))
@@ -86,7 +86,7 @@ class ActorsControllerIT extends BaseIT {
     @Test
     void actorsIdGetReturnsNotFound() throws Exception {
         mockMvc.perform(get("/actors/{id}", 12345)
-                .header("Authorization", "Basic " + encodeCredentials("user1", "pass")))
+                .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

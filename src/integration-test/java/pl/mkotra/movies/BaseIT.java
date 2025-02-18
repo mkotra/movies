@@ -26,6 +26,9 @@ public abstract class BaseIT {
         MARIADB.start();
     }
 
+    protected static final String USER = "user1";
+    protected static final String PASSWORD = "pas$$";
+
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
