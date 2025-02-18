@@ -27,7 +27,7 @@ public abstract class BaseIT {
     }
 
     protected static final String USER = "user1";
-    protected static final String PASSWORD = "pas$$";
+    protected static final String PASSWORD = "pass1";
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;

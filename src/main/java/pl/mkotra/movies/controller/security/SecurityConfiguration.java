@@ -13,11 +13,11 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-class SecurityConfiguration {
+public class SecurityConfiguration {
 
     private final SecurityProperties securityProperties;
 
-    public SecurityConfiguration(SecurityProperties securityProperties) {
+    SecurityConfiguration(SecurityProperties securityProperties) {
         this.securityProperties = securityProperties;
     }
 

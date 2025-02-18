@@ -27,15 +27,15 @@ spring:
   security:
     users:
       - username: user1
-        password: pa$$
+        password: pass1
         roles:
           - USER
       - username: user2
-        password: pa$$
+        password: pass2
         roles:
           - USER
       - username: user3
-        password: pa$$
+        password: pass3
         roles:
           - USER
 
