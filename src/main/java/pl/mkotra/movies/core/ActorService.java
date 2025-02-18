@@ -33,7 +33,7 @@ public class ActorService {
 
     public Page<Actor> getActors(String name, Integer pageNumber, Integer pageSize) {
 
-        Page<ActorDB> actorDBPage = actorRepository.findByName(name, PageRequest.of(pageNumber, pageSize, ACTORS_SORT));
+        Page<ActorDB> actorDBPage = actorRepository.findByNameContaining(name, PageRequest.of(pageNumber, pageSize, ACTORS_SORT));
 
         List<Actor> actors = actorDBPage.getContent().stream()
                 .map(ActorMapper.INSTANCE::map)

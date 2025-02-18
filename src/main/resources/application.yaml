@@ -27,17 +27,21 @@ spring:
   security:
     users:
       - username: user1
-        password: pass
+        password: pa$$
         roles:
           - USER
       - username: user2
-        password: pass
+        password: pa$$
         roles:
           - USER
       - username: user3
-        password: pass
+        password: pa$$
         roles:
           - USER
+
+rate-limiter:
+  max-requests: 5
+  time-window: 60000 # 1 minute
 
 management:
   endpoint:

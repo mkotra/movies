@@ -7,7 +7,7 @@ import java.util.List;
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.security")
-public class SecurityProperties {
+class SecurityProperties {
 
     private List<User> users;
 

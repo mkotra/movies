@@ -2,8 +2,6 @@ package pl.mkotra.movies.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import pl.mkotra.movies.BaseIT;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -13,9 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class ActorsControllerIT extends BaseIT {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setupDatabase() {

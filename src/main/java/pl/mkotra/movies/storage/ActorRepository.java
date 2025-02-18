@@ -8,5 +8,5 @@ import pl.mkotra.movies.storage.entities.ActorDB;
 
 @Repository
 public interface ActorRepository extends JpaRepository<ActorDB, Integer> {
-    Page<ActorDB> findByName(String title, Pageable pageable);
+    Page<ActorDB> findByNameContaining(String title, Pageable pageable);
 }

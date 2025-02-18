@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,6 +27,9 @@ public abstract class BaseIT {
     }
 
     @Autowired
+    protected JdbcTemplate jdbcTemplate;
+
+    @Autowired
     protected MockMvc mockMvc;
 
     protected String encodeCredentials(String username, String password) {
@@ -38,5 +42,7 @@ public abstract class BaseIT {
         registry.add("spring.datasource.url", MARIADB::getJdbcUrl);
         registry.add("spring.datasource.username", MARIADB::getUsername);
         registry.add("spring.datasource.password", MARIADB::getPassword);
+        registry.add("rate-limiter.max-requests", () -> 1000);
+        registry.add("rate-limiter.time-window", () -> 1000);
     }
 }
