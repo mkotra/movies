@@ -8,7 +8,7 @@ The goal was to provide something maybe not 100% functional, but with decent qua
 improvements.
 
 ## Implemented Features
-- **Database storage** to keep data in tables: actors, movies, appearances **
+- **Database storage** to keep data in tables: actors, movies, appearances
 - **OpenAPI Swagger UI web client**
 - **Basic auth** security with three users hardcoded in application.yaml
 - **Paging info included in custom response headers**
