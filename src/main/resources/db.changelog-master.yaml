@@ -49,21 +49,22 @@ databaseChangeLog:
                   name: character_name
                   type: varchar(255)
 
-        - addPrimaryKey:
-            tableName: appearances
-            columnNames: movie_id, actor_id
-            constraintName: pk_appearances
-
-        - addForeignKeyConstraint:
-            baseTableName: appearances
-            baseColumnNames: movie_id
-            referencedTableName: movies
-            referencedColumnNames: id
-            constraintName: fk_appearances_movies
-
-        - addForeignKeyConstraint:
-            baseTableName: appearances
-            baseColumnNames: actor_id
-            referencedTableName: actors
-            referencedColumnNames: id
-            constraintName: fk_appearances_actors
+# as we want to work with some subset of data, this ain't going to work
+#        - addPrimaryKey:
+#           tableName: appearances
+#           columnNames: movie_id, actor_id
+#           constraintName: pk_appearances
+#
+#        - addForeignKeyConstraint:
+#            baseTableName: appearances
+#            baseColumnNames: movie_id
+#            referencedTableName: movies
+#            referencedColumnNames: id
+#            constraintName: fk_appearances_movies
+#
+#        - addForeignKeyConstraint:
+#            baseTableName: appearances
+#            baseColumnNames: actor_id
+#            referencedTableName: actors
+#            referencedColumnNames: id
+#            constraintName: fk_appearances_actors

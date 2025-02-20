@@ -62,3 +62,6 @@ spring-doc:
   swagger-ui:
     enabled: true
     use-root-path: true
+
+imdb-files:
+  base-path: /imdb

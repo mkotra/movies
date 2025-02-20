@@ -9,6 +9,7 @@ improvements.
 
 ## Implemented Features
 - **Database storage** to keep data in tables: actors, movies, appearances
+- **Loading data from imdb files**
 - **OpenAPI Swagger UI web client**
 - **Basic auth** security with three users hardcoded in application.yaml
 - **Paging info included in custom response headers**
@@ -18,7 +19,6 @@ improvements.
 
 ## Missing Features
 Due to limited time for the task I did not manage to implement:
-- **Load the data from tsv files** - only some random data for now.
 - **WebUI** - I was planning to provide maybe some simple Angular based Web UI, but only managed to provide SwaggerUI.
 - **Custom Micrometer Metrics** - there are only defaults provided by Spring.
 
@@ -79,7 +79,7 @@ http://localhost:8080/actuator/prometheus
 ### Exploring API
 - Please use **SwaggerUI**
 - **Authorize** - please check application.yaml security section to obtain credentials.
-- Populate some random data into database **populate data API**
+- Populate data into database **populate data API**, please make sure imdb files are stored in proper location.
 - Start using actors API and movies API
 
 [![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
