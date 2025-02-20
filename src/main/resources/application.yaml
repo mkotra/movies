@@ -40,7 +40,7 @@ spring:
           - USER
 
 rate-limiter:
-  max-requests: 1000
+  max-requests: 5
   time-window: 60000 # 1 minute
 
 management:
