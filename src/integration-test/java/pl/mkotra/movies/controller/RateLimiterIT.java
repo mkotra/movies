@@ -41,6 +41,11 @@ public class RateLimiterIT extends BaseIT {
                 .andDo(print())
                 .andExpect(status().isTooManyRequests());
 
+        mockMvc.perform(get("/movies")
+                        .with(httpBasic("user2", "pass2")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
         //for apis other than /movies and /actors should not limit requests
         mockMvc.perform(get("/swagger")
                         .with(httpBasic(USER, PASSWORD)))

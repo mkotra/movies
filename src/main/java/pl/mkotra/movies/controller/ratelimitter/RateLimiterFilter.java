@@ -38,14 +38,28 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        int maxRequestsPerTimeWindow = rateLimiterProperties.getMaxRequests();
-        long timeWindowMs = rateLimiterProperties.getTimeWindow();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = Optional.ofNullable(authentication.getName()).orElse("anonymousUser");
+        String username = Optional.ofNullable(authentication)
+                .map(Authentication::getName)
+                .orElse("anonymousUser");
 
-        UserRequest userRequest = userRequests.getOrDefault(username, new UserRequest());
+        int maxRequestsPerTimeWindow = rateLimiterProperties.getMaxRequests();
+        long timeWindowMs = rateLimiterProperties.getTimeWindow();
         long currentTime = System.currentTimeMillis();
+
+        userRequests.compute(username, (key, userRequest) -> {
+            if (userRequest == null || (currentTime - userRequest.getLastRequestTime()) > timeWindowMs) {
+                return new UserRequest(currentTime);
+            }
+            if (userRequest.getRequestCount() >= maxRequestsPerTimeWindow) {
+                return userRequest;
+            }
+            userRequest.incrementRequestCount();
+            return userRequest;
+        });
+
+        UserRequest userRequest = userRequests.get(username);
 
         if (userRequest.getRequestCount() >= maxRequestsPerTimeWindow && currentTime - userRequest.getLastRequestTime() < timeWindowMs) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
@@ -55,13 +69,6 @@ public class RateLimiterFilter extends OncePerRequestFilter {
             meterRegistry.counter("rate_limited_request_count").increment();
             return;
         }
-
-        if (currentTime - userRequest.getLastRequestTime() > timeWindowMs) {
-            userRequest.reset(currentTime);
-        }
-
-        userRequest.incrementRequestCount();
-        userRequests.put(username, userRequest);
 
         filterChain.doFilter(request, response);
     }

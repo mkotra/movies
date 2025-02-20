@@ -53,9 +53,12 @@ class RateLimiterFilterTest {
         when(authentication.isAuthenticated()).thenReturn(true);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserRequest userRequest = new UserRequest();
-        userRequest.setRequestCount(5);
-        userRequest.setLastRequestTime(System.currentTimeMillis() - 1000);
+        UserRequest userRequest = new UserRequest(System.currentTimeMillis() - 1000);
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
         rateLimiterFilter.getUserRequests().put("user", userRequest);
 
         Counter mockCounter = mock(Counter.class);
@@ -65,10 +68,12 @@ class RateLimiterFilterTest {
         rateLimiterFilter.doFilterInternal(request, response, filterChain);
 
         //then
-        assertThat(userRequest.getRequestCount()).isEqualTo(5);
         verify(response).setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         verify(writer).write("Too many requests for user user - please try again later.");
         verify(meterRegistry).counter(anyString(), any(String[].class));
+
+        int requestCount = rateLimiterFilter.getUserRequests().get("user").getRequestCount();
+        assertThat(requestCount).isEqualTo(5);
     }
 
     @Test
@@ -79,9 +84,10 @@ class RateLimiterFilterTest {
         when(authentication.isAuthenticated()).thenReturn(true);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserRequest userRequest = new UserRequest();
-        userRequest.setRequestCount(3);
-        userRequest.setLastRequestTime(System.currentTimeMillis() - 1000);
+        UserRequest userRequest = new UserRequest(System.currentTimeMillis() - 1000);
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
         rateLimiterFilter.getUserRequests().put("user", userRequest);
 
         //when
@@ -89,7 +95,8 @@ class RateLimiterFilterTest {
 
         //then
         verify(filterChain).doFilter(request, response);
-        assertThat(userRequest.getRequestCount()).isEqualTo(4);
+        int requestCount = rateLimiterFilter.getUserRequests().get("user").getRequestCount();
+        assertThat(requestCount).isEqualTo(4);
     }
 
     @Test
@@ -100,9 +107,10 @@ class RateLimiterFilterTest {
         when(authentication.isAuthenticated()).thenReturn(true);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserRequest userRequest = new UserRequest();
-        userRequest.setRequestCount(3);
-        userRequest.setLastRequestTime(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(2)); // Time window expired
+        UserRequest userRequest = new UserRequest(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(2));
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
+        userRequest.incrementRequestCount();
         rateLimiterFilter.getUserRequests().put("user", userRequest);
 
         //when
@@ -110,6 +118,7 @@ class RateLimiterFilterTest {
 
         //then
         verify(filterChain).doFilter(request, response);
-        assertThat(userRequest.getRequestCount()).isEqualTo(1);
+        int requestCount = rateLimiterFilter.getUserRequests().get("user").getRequestCount();
+        assertThat(requestCount).isEqualTo(0);
     }
 }
