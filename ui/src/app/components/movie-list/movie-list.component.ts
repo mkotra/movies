@@ -2,12 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MovieService, Movie} from '../../services/movie.service';
 import {MatTableModule} from '@angular/material/table';
-import {NgxPaginationModule} from 'ngx-pagination';
 
 @Component({
   selector: 'movie-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, NgxPaginationModule],
+  imports: [CommonModule, MatTableModule],
   templateUrl: './movie-list.component.html',
 })
 export class MovieListComponent implements OnInit {
