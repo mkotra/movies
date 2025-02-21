@@ -18,6 +18,12 @@ databaseChangeLog:
               - column:
                   name: year
                   type: varchar(4)
+            indexes:
+              - index:
+                  name: idx_movies_title
+                  columns:
+                    - column:
+                        name: title
 
         - createTable:
             tableName: actors
@@ -31,6 +37,12 @@ databaseChangeLog:
               - column:
                   name: name
                   type: varchar(255)
+            indexes:
+              - index:
+                  name: idx_actors_name
+                  columns:
+                    - column:
+                        name: name
 
         - createTable:
             tableName: appearances

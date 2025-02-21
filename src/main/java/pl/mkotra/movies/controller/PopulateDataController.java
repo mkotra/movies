@@ -42,10 +42,9 @@ class PopulateDataController {
     @PostMapping("/populate")
     void populateData(@RequestParam(value = "limit", required = false, defaultValue = "5000") int limit) throws CsvValidationException, IOException {
         logger.info("Cleanup old data...");
-        jdbcTemplate.execute("DELETE FROM appearances;");
-        jdbcTemplate.execute("DELETE FROM actors;");
-        jdbcTemplate.execute("DELETE FROM movies;");
-
+        jdbcTemplate.execute("TRUNCATE TABLE appearances;");
+        jdbcTemplate.execute("TRUNCATE TABLE actors;");
+        jdbcTemplate.execute("TRUNCATE TABLE movies;");
 
         logger.info("Files processing started...");
         moviesProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
