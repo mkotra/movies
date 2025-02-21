@@ -29,17 +29,15 @@ public abstract class FileProcessor {
     }
 
     public void process(String filePath, int limit) throws IOException, CsvValidationException {
-
-        jdbcTemplate.execute("SET autocommit=1");
-
         try (GZIPInputStream gis = new GZIPInputStream(new FileInputStream(filePath));
              BufferedReader br = new BufferedReader(new InputStreamReader(gis));
              CSVReader reader = new CSVReaderBuilder(br)
                      .withCSVParser(new CSVParserBuilder()
                              .withSeparator('\t')
+                             //this important as openCSV parser has some issues with multiline rows
+                             .withIgnoreQuotations(true)
                              .build())
                      .build()) {
-
 
             String[] nextLine;
             reader.readNext();

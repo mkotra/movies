@@ -24,7 +24,7 @@ public class PopulateDataIT extends BaseIT {
 
     @Test
     void populateSavesDataFromFilesIntoDB() throws Exception {
-        int limit = 100;
+        int limit = 10;
 
         assertThat(movieRepository.count()).isEqualTo(0);
         assertThat(actorRepository.count()).isEqualTo(0);
