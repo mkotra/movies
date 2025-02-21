@@ -29,6 +29,9 @@ public abstract class FileProcessor {
     }
 
     public void process(String filePath, int limit) throws IOException, CsvValidationException {
+
+        jdbcTemplate.execute("SET autocommit=1");
+
         try (GZIPInputStream gis = new GZIPInputStream(new FileInputStream(filePath));
              BufferedReader br = new BufferedReader(new InputStreamReader(gis));
              CSVReader reader = new CSVReaderBuilder(br)
@@ -51,7 +54,7 @@ public abstract class FileProcessor {
                 }
 
                 if (batchData.size() >= BATCH_SIZE) {
-                    logger.info("Inserting batch of 1000, current line number is: {}", lineNumber);
+                    logger.info("Inserting batch of {}, current line number is: {}", BATCH_SIZE, lineNumber);
                     try {
                         insertBatch(batchData);
                     } catch (Exception e) {

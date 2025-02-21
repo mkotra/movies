@@ -2,6 +2,8 @@ package pl.mkotra.movies.controller;
 
 import com.opencsv.exceptions.CsvValidationException;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,8 @@ import java.io.IOException;
 @Tag(name = "populate-data", description = "the populate-data API")
 @RestController("/populate-data")
 class PopulateDataController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PopulateDataController.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final MoviesProcessor moviesProcessor;
@@ -37,10 +41,13 @@ class PopulateDataController {
 
     @PostMapping("/populate")
     void populateData(@RequestParam(value = "limit", required = false, defaultValue = "5000") int limit) throws CsvValidationException, IOException {
+        logger.info("Cleanup old data...");
         jdbcTemplate.execute("DELETE FROM appearances;");
         jdbcTemplate.execute("DELETE FROM actors;");
         jdbcTemplate.execute("DELETE FROM movies;");
 
+
+        logger.info("Files processing started...");
         moviesProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
         actorsProcessor.process(imdbFilesBasePath + "/name.basics.tsv.gz", limit);
         appearancesProcessor.process(imdbFilesBasePath + "/title.principals.tsv.gz", limit);
