@@ -32,7 +32,7 @@ databaseChangeLog:
                   name: id
                   type: int
                   constraints:
-                    #primaryKey: true
+                    primaryKey: true
                     nullable: false
               - column:
                   name: name
