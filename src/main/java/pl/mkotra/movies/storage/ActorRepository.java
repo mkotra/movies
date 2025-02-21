@@ -10,13 +10,13 @@ import pl.mkotra.movies.storage.entities.ActorDB;
 @Repository
 public interface ActorRepository extends JpaRepository<ActorDB, Integer> {
 
-    default Page<ActorDB> findByName(String title, Pageable pageable) {
-        if (StringUtils.isBlank(title)) {
+    default Page<ActorDB> findByName(String name, Pageable pageable) {
+        if (StringUtils.isBlank(name)) {
             return findAll(pageable);
         } else {
-            return findByNameContaining(title, pageable);
+            return findByNameContaining(name, pageable);
         }
     }
 
-    Page<ActorDB> findByNameContaining(String title, Pageable pageable);
+    Page<ActorDB> findByNameContaining(String name, Pageable pageable);
 }
