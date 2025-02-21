@@ -4,11 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MoviesFileProcessor extends FileProcessor {
+public class MoviesProcessor extends FileProcessor {
 
     private static final String SQL = "INSERT INTO movies (id, title, year) VALUES (?, ?, ?);";
 
-    MoviesFileProcessor(JdbcTemplate jdbcTemplate) {
+    MoviesProcessor(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 

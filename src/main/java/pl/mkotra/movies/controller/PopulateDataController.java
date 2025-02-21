@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.mkotra.movies.file.ActorsProcessor;
 import pl.mkotra.movies.file.AppearancesProcessor;
-import pl.mkotra.movies.file.MoviesFileProcessor;
+import pl.mkotra.movies.file.MoviesProcessor;
 
 import java.io.IOException;
 
@@ -18,18 +18,18 @@ import java.io.IOException;
 class PopulateDataController {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MoviesFileProcessor moviesFileProcessor;
+    private final MoviesProcessor moviesProcessor;
     private final ActorsProcessor actorsProcessor;
     private final AppearancesProcessor appearancesProcessor;
     private final String imdbFilesBasePath;
 
     public PopulateDataController(JdbcTemplate jdbcTemplate,
-                                  MoviesFileProcessor moviesFileProcessor,
+                                  MoviesProcessor moviesProcessor,
                                   ActorsProcessor actorsProcessor,
                                   AppearancesProcessor appearancesProcessor,
                                   @Value("${imdb-files.base-path}") String imdbFilesBasePath) {
         this.jdbcTemplate = jdbcTemplate;
-        this.moviesFileProcessor = moviesFileProcessor;
+        this.moviesProcessor = moviesProcessor;
         this.actorsProcessor = actorsProcessor;
         this.appearancesProcessor = appearancesProcessor;
         this.imdbFilesBasePath = imdbFilesBasePath;
@@ -41,7 +41,7 @@ class PopulateDataController {
         jdbcTemplate.execute("DELETE FROM actors;");
         jdbcTemplate.execute("DELETE FROM movies;");
 
-        moviesFileProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
+        moviesProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
         actorsProcessor.process(imdbFilesBasePath + "/name.basics.tsv.gz", limit);
         appearancesProcessor.process(imdbFilesBasePath + "/title.principals.tsv.gz", limit);
     }
