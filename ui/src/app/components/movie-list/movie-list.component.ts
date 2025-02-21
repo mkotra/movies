@@ -1,5 +1,6 @@
 import {Component, Inject, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule, FormControl} from '@angular/forms';
 import {MovieService, Movie} from '../../services/movie.service';
 import {MatTableModule} from '@angular/material/table';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -7,7 +8,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from '@angular/material/dia
 @Component({
   selector: 'movie-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule],
+  imports: [CommonModule, MatTableModule, ReactiveFormsModule],
   templateUrl: './movie-list.component.html',
 })
 export class MovieListComponent implements OnInit {
@@ -17,12 +18,17 @@ export class MovieListComponent implements OnInit {
   totalPages: number = 0;
   pageSize: number = 10;
   dialog = inject(MatDialog);
-
+  pageControl = new FormControl(this.currentPage);
   constructor(private movieService: MovieService) {
   }
 
   ngOnInit(): void {
     this.loadMovies();
+    this.pageControl.valueChanges.subscribe(value => {
+      this.currentPage = value ? value : 0;
+      console.log("Page manually changed to " + value);
+      this.loadMovies();
+    });
   }
 
   loadMovies(): void {
@@ -54,14 +60,14 @@ export class MovieListComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.loadMovies();
+      this.pageControl.setValue(this.currentPage, { emitEvent: true });
     }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.loadMovies();
+      this.pageControl.setValue(this.currentPage, { emitEvent: true });
     }
   }
 }
@@ -76,11 +82,12 @@ export class MovieListComponent implements OnInit {
       <p><strong>ID:</strong> {{ data.id }}</p>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button mat-dialog-close>Close</button>
+      <button mat-dialog-close>Close</button>
     </mat-dialog-actions>
   `,
 })
 export class DialogContent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Movie) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Movie) {
+  }
 }
 
