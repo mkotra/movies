@@ -19,7 +19,6 @@ improvements.
 
 ## Missing Features
 Due to limited time for the task I did not manage to implement:
-- **WebUI** - I was planning to provide maybe some simple Angular based Web UI, but only managed to provide SwaggerUI.
 - **Custom Micrometer Metrics** - there are only defaults provided by Spring.
 
 ## Prerequisites
@@ -81,5 +80,27 @@ http://localhost:8080/actuator/prometheus
 - **Authorize** - please check application.yaml security section to obtain credentials.
 - Populate data into database **populate data API**, please make sure imdb files are stored in proper location.
 - Start using actors API and movies API
+
+### WebUI 
+
+Simple Angular based Web UI was implemented to display movie list. 
+Node.js LTS needs to be installed in the system to build it and run.
+
+Please also install Angular cli (if not installed):
+```sh
+npm install -g @angular/cli
+```
+
+Then please navigate to the `ui/` directory and run:
+```sh
+ng serve
+```
+
+Simple Web UI can be accessed here:
+```text
+http://localhost:4200
+```
+
+Web UI consumes movies API, please remember about RPS limit that may result with 429 errors.
 
 [![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
