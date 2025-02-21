@@ -26,12 +26,12 @@
 
 
   <div class="pagination-controls">
-    <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+    <button (click)="prevPage()" [disabled]="currentPage == 1">Previous</button>
 
-    <span>| Page <input type="text" [formControl]="pageControl"> - out of total {{totalPages}} pages</span>
-    <span> | Total elements: {{totalItems}} |</span>
+    <span>| Page <input type="number" [attr.min]="1" [attr.max]="totalPages" [formControl]="pageControl"> - out of total {{totalPages}} pages</span>
+    <span> | Page size: {{pageSize}} | Total elements: {{totalItems}} |</span>
 
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
 </div>
 
