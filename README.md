@@ -14,7 +14,7 @@ improvements.
 - **Basic auth** security with three users hardcoded in application.yaml
 - **Paging info included in custom response headers**
 - **Rate limiter** to protect the API
-- **Unit and Integration tests**
+- **Wildcard search** according to the SQL syntax: https://www.w3schools.com/sql/sql_wildcards.asp
 - **Prometheus metrics**
 
 ## Missing Features
