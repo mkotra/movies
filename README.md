@@ -77,7 +77,7 @@ http://localhost:9090
 
 Useful metrics:
 ```scss
-sum(movies_get_seconds_sum) / sum(movies_get_seconds_count)
+movies_get_seconds_sum / movies_get_seconds_count
 ```
 ```scss
 max(movies_get_seconds_max)
