@@ -55,6 +55,9 @@ management:
     metrics:
       export:
         enabled: true
+  metrics:
+    enable:
+      jdbc: true
 
 spring-doc:
   api-docs:
