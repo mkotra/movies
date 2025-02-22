@@ -23,7 +23,7 @@ class ActorsController implements ActorsApi {
     }
 
     @Override
-    public ResponseEntity<List<Actor>> actorsGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "") String name) {
+    public ResponseEntity<List<Actor>> actorsGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "%") String name) {
         Page<Actor> actorPage = actorService.getActors(name, page, pageSize);
 
         return ResponseEntity.ok()

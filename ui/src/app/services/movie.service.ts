@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {throwError} from 'rxjs';
@@ -22,9 +22,10 @@ export class MovieService {
   }
 
   getMovies(page: number, size: number, name: string): Observable<HttpResponse<Movie[]>> {
+    const params = new HttpParams().append("page", page).append('page_size', size).append("name", name)
     const headers = this.authHeaders();
 
-    return this.http.get<Movie[]>(`${this.apiUrl}?page=${page}&page_size=${size}&name=${name}`, {headers, observe: 'response'}).pipe(
+    return this.http.get<Movie[]>(`${this.apiUrl}`, {params, headers, observe: 'response'}).pipe(
       catchError(error => {
         console.error('Error occurred while fetching movies:', error);
         return throwError(() => new Error('Failed to fetch movies'));

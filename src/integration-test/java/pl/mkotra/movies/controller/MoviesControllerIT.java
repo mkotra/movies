@@ -24,23 +24,20 @@ class MoviesControllerIT extends BaseIT {
 
         mockMvc.perform(get("/movies")
                         .with(httpBasic(USER, PASSWORD))
-                        .param("name", "The")
+                        .param("name", "%God_ather%")
                         .param("page", "0")
                         .param("page_size", "10"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string("X-Total-Size", "2"))
+                .andExpect(header().string("X-Total-Size", "1"))
                 .andExpect(header().string("X-Total-Pages", "1"))
                 .andExpect(header().string("X-Page-Number", "0"))
                 .andExpect(header().string("X-Page-Size", "10"))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").value(hasSize(2)))
+                .andExpect(jsonPath("$").value(hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(is(1)))
                 .andExpect(jsonPath("$[0].title").value(is("The Godfather")))
-                .andExpect(jsonPath("$[0].year").value(is("1972")))
-                .andExpect(jsonPath("$[1].id").value(is(2)))
-                .andExpect(jsonPath("$[1].title").value(is("The Shawshank Redemption")))
-                .andExpect(jsonPath("$[1].year").value(is("1994")));
+                .andExpect(jsonPath("$[0].year").value(is("1972")));
     }
 
     @Test

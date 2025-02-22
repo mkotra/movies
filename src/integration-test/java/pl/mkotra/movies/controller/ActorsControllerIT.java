@@ -25,7 +25,7 @@ class ActorsControllerIT extends BaseIT {
 
         mockMvc.perform(get("/actors")
                         .with(httpBasic(USER, PASSWORD))
-                        .param("name", "Leonardo DiCaprio")
+                        .param("name", "%Leonardo DiCaprio")
                         .param("page", "0")
                         .param("page_size", "10"))
                 .andDo(print())

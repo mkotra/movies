@@ -55,7 +55,7 @@ class MovieServiceTest {
         Page<MovieDB> mockResult = mock(Page.class);
         Pageable mockPageable = mock(Pageable.class);
         when(mockResult.getPageable()).thenReturn(mockPageable);
-        when(movieRepository.findByTitleContaining(eq(title), any(Pageable.class))).thenReturn(mockResult);
+        when(movieRepository.findByTitleLike(eq(title), any(Pageable.class))).thenReturn(mockResult);
 
         //when
         Page<Movie> result = movieService.getMovies("title", pageNumber, pageSize);
@@ -69,7 +69,7 @@ class MovieServiceTest {
                 });
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(movieRepository).findByTitleContaining(eq("title"), pageableCaptor.capture());
+        verify(movieRepository).findByTitleLike(eq("title"), pageableCaptor.capture());
 
         Pageable capturedPageable = pageableCaptor.getValue();
         assertThat(capturedPageable).isNotNull();

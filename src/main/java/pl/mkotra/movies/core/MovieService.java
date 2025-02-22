@@ -30,7 +30,7 @@ public class MovieService {
     public Page<Movie> getMovies(String title, Integer pageNumber, Integer pageSize) {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, SORT);
-        Page<MovieDB> movieDBPage = movieRepository.findByTitleContaining(title, pageRequest);
+        Page<MovieDB> movieDBPage = movieRepository.findByTitleLike(title, pageRequest);
 
         List<Movie> actors = movieDBPage.getContent().stream()
                 .map(MovieMapper.INSTANCE::map)

@@ -22,7 +22,7 @@ class MoviesController implements MoviesApi {
     }
 
     @Override
-    public ResponseEntity<List<Movie>> moviesGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "") String name) {
+    public ResponseEntity<List<Movie>> moviesGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "%") String name) {
         Page<Movie> actorPage = moviesService.getMovies(name, page, pageSize);
 
         return ResponseEntity.ok()

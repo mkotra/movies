@@ -65,3 +65,9 @@ spring-doc:
 
 imdb-files:
   base-path: /imdb
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.stat: DEBUG
