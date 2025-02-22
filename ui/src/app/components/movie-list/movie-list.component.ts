@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule, FormControl} from '@angular/forms';
 import {MovieService, Movie} from '../../services/movie.service';
 import {MatTableModule} from '@angular/material/table';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from '@angular/material/dialog';
 
 @Component({
@@ -18,21 +19,32 @@ export class MovieListComponent implements OnInit {
   totalPages: number = 0;
   pageSize: number = 10;
   dialog = inject(MatDialog);
+  searchControl = new FormControl('');
   pageControl = new FormControl(this.currentPage);
+
   constructor(private movieService: MovieService) {
   }
 
   ngOnInit(): void {
-    this.loadMovies();
+    this.loadMovies("");
     this.pageControl.valueChanges.subscribe(value => {
       this.currentPage = value ? value : 0;
       console.log("Page manually changed to " + value);
-      this.loadMovies();
+      this.loadMovies(this.searchControl.value || "");
+    });
+
+    this.searchControl.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.currentPage = 1;
+      console.log("Search text changed to " + value);
+      this.loadMovies(this.searchControl.value || "");
     });
   }
 
-  loadMovies(): void {
-    this.movieService.getMovies(this.currentPage - 1, this.pageSize).subscribe((response) => {
+  loadMovies(name: string): void {
+    this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
       this.movies = response.body ? response.body : [];
 
       const totalSizeHeader = response.headers.get('X-Total-Size');

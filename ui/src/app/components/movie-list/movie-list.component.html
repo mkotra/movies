@@ -1,5 +1,8 @@
 <div class="container">
   <h2>Movies List</h2>
+
+  <input type="text" [formControl]="searchControl" placeholder="Search by title..." />
+
   <table mat-table [dataSource]="movies" class="mat-elevation-z8">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>

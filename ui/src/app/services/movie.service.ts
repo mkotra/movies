@@ -21,10 +21,10 @@ export class MovieService {
   constructor(private http: HttpClient) {
   }
 
-  getMovies(page: number, size: number): Observable<HttpResponse<Movie[]>> {
+  getMovies(page: number, size: number, name: string): Observable<HttpResponse<Movie[]>> {
     const headers = this.authHeaders();
 
-    return this.http.get<Movie[]>(`${this.apiUrl}?page=${page}&page_size=${size}`, {headers, observe: 'response'}).pipe(
+    return this.http.get<Movie[]>(`${this.apiUrl}?page=${page}&page_size=${size}&name=${name}`, {headers, observe: 'response'}).pipe(
       catchError(error => {
         console.error('Error occurred while fetching movies:', error);
         return throwError(() => new Error('Failed to fetch movies'));
