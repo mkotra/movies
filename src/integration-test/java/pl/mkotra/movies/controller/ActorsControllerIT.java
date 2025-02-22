@@ -118,7 +118,7 @@ class ActorsControllerIT extends BaseIT {
     @Test
     void actorsIdGetReturnsNotFound() throws Exception {
         mockMvc.perform(get("/actors/{id}", 12345)
-                        .header("Authorization", "Basic " + encodeCredentials(USER, PASSWORD)))
+                        .with(httpBasic(USER, PASSWORD)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

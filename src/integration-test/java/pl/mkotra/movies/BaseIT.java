@@ -36,11 +36,6 @@ public abstract class BaseIT {
     @Autowired
     protected MockMvc mockMvc;
 
-    protected String encodeCredentials(String username, String password) {
-        String auth = username + ":" + password;
-        return new String(java.util.Base64.getEncoder().encode(auth.getBytes()));
-    }
-
     @DynamicPropertySource
     public static void testProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", MARIADB::getJdbcUrl);
