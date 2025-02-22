@@ -16,7 +16,6 @@
 	<name>movies</name>
 	<description>Movies</description>
 
-
 	<properties>
 		<java.version>23</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>

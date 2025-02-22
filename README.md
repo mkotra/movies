@@ -66,9 +66,21 @@ http://localhost:8080/actuator/metrics
 ```
 
 Actuator metrics for Prometheus can be accessed here:
-
 ```text
 http://localhost:8080/actuator/prometheus
+```
+
+Prometheus UI can be accessed here: 
+```text
+http://localhost:9090
+```
+
+Useful metrics:
+```scss
+sum(movies_get_seconds_sum) / sum(movies_get_seconds_count)
+```
+```scss
+max(movies_get_seconds_max)
 ```
 
 ### Exploring API
