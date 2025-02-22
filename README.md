@@ -20,7 +20,7 @@ improvements.
 ## Prerequisites
 To run the application, we will need:
 - **Java 23**
-- **Docker** (required for integration tests and can also set up MariaDB)
+- **Docker** (required for integration tests and can also set up MariaDB and Prometheus UI)
 - **MariaDB**
 
 ## Running the Application
