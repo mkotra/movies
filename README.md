@@ -17,10 +17,6 @@ improvements.
 - **Wildcard search** according to the SQL syntax: https://www.w3schools.com/sql/sql_wildcards.asp
 - **Prometheus metrics**
 
-## Missing Features
-Due to limited time for the task I did not manage to implement:
-- **Custom Micrometer Metrics** - there are only defaults provided by Spring.
-
 ## Prerequisites
 To run the application, we will need:
 - **Java 23**

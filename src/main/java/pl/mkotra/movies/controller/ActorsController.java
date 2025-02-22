@@ -1,5 +1,6 @@
 package pl.mkotra.movies.controller;
 
+import io.micrometer.core.annotation.Timed;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ class ActorsController implements ActorsApi {
     }
 
     @Override
+    @Timed(value = "actors.get", description = "Time taken to get actors")
     public ResponseEntity<List<Actor>> actorsGet(Integer page, Integer pageSize, @RequestParam(defaultValue = "%") String name) {
         Page<Actor> actorPage = actorService.getActors(name, page, pageSize);
 
@@ -32,6 +34,7 @@ class ActorsController implements ActorsApi {
     }
 
     @Override
+    @Timed(value = "actors.id.appearances.get", description = "Time taken to get actor appearances")
     public ResponseEntity<List<Appearance>> actorsIdAppearancesGet(Integer id, Integer page, Integer pageSize) {
         Page<Appearance> actorPage = actorService.getAppearances(id, page, pageSize);
 
@@ -41,6 +44,7 @@ class ActorsController implements ActorsApi {
     }
 
     @Override
+    @Timed(value = "actors.id.get", description = "Time taken to get actor by id")
     public ResponseEntity<Actor> actorsIdGet(Integer id) {
         return actorService.getActor(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

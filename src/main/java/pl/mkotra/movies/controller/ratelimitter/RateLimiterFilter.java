@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,7 +49,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
         long timeWindowMs = rateLimiterProperties.getTimeWindow();
         long currentTime = System.currentTimeMillis();
 
-        userRequests.compute(username, (key, userRequest) -> {
+        userRequests.compute(username, (_, userRequest) -> {
             if (userRequest == null || (currentTime - userRequest.getLastRequestTime()) > timeWindowMs) {
                 return new UserRequest(currentTime);
             }
@@ -66,7 +67,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
             String message = "Too many requests for user " + username + " - please try again later.";
             response.getWriter().write(message);
             logger.warn(message);
-            meterRegistry.counter("rate_limited_request_count").increment();
+            meterRegistry.counter("rate.limited.request.count").increment();
             return;
         }
 

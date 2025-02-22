@@ -57,7 +57,7 @@ management:
         enabled: true
   metrics:
     enable:
-      jdbc: true
+      all: true
 
 spring-doc:
   api-docs:
@@ -71,6 +71,6 @@ imdb-files:
 
 logging:
   level:
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: OFF
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.stat: DEBUG
