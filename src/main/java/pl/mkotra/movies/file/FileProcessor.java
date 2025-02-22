@@ -29,6 +29,7 @@ public abstract class FileProcessor {
     }
 
     public void process(String filePath, int limit) throws IOException, CsvValidationException {
+        preProcess();
         try (GZIPInputStream gis = new GZIPInputStream(new FileInputStream(filePath));
              BufferedReader br = new BufferedReader(new InputStreamReader(gis));
              CSVReader reader = new CSVReaderBuilder(br)
@@ -71,6 +72,15 @@ public abstract class FileProcessor {
 
             logger.info("All {} records inserted successfully.", lineNumber);
         }
+        postProcess();
+    }
+
+    protected void preProcess() {
+
+    }
+
+    protected void postProcess() {
+
     }
 
     protected abstract String getSql();
