@@ -50,7 +50,7 @@ class ActorServiceTest {
     }
 
     @Test
-    void getActorsSReturnsValidResult() {
+    void getActorsReturnsValidResult() {
         //given
         String name = "name";
         int pageNumber = 1;
@@ -74,6 +74,38 @@ class ActorServiceTest {
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
         verify(actorRepository).findByNameLike(eq("name"), pageableCaptor.capture());
+
+        Pageable capturedPageable = pageableCaptor.getValue();
+        assertThat(capturedPageable).isNotNull();
+        assertThat(capturedPageable.getPageNumber()).isEqualTo(pageNumber);
+        assertThat(capturedPageable.getPageSize()).isEqualTo(pageSize);
+        assertThat(capturedPageable.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    @Test
+    void getActorsWithWildcardReturnsValidResult() {
+        //given
+        int pageNumber = 1;
+        int pageSize = 10;
+        @SuppressWarnings("unchecked")
+        Page<ActorDB> mockResult = mock(Page.class);
+        Pageable mockPageable = mock(Pageable.class);
+        when(mockResult.getPageable()).thenReturn(mockPageable);
+        when(actorRepository.findAll(any(Pageable.class))).thenReturn(mockResult);
+
+        //when
+        Page<Actor> result = actorService.getActors("%", pageNumber, pageSize);
+
+        // then
+        assertThat(result)
+                .satisfies(page -> {
+                    assertThat(page.getTotalElements()).isEqualTo(0);
+                    assertThat(page.getTotalPages()).isEqualTo(1);
+                    assertThat(page.getPageable()).isEqualTo(mockPageable);
+                });
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(actorRepository).findAll(pageableCaptor.capture());
 
         Pageable capturedPageable = pageableCaptor.getValue();
         assertThat(capturedPageable).isNotNull();

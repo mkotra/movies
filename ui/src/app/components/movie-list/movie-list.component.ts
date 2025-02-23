@@ -26,13 +26,14 @@ export class MovieListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadMovies("");
     this.pageControl.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(value => {
       this.currentPage = value ? value : 0;
       console.log("Page manually changed to " + value);
-      this.loadMovies(this.searchControl.value);
+      this.loadMovies(this.searchControl.value || "");
     });
 
     this.searchControl.valueChanges.pipe(
@@ -41,12 +42,11 @@ export class MovieListComponent implements OnInit {
     ).subscribe(value => {
       this.currentPage = 1;
       console.log("Search text changed to " + value);
-      this.loadMovies(this.searchControl.value);
+      this.loadMovies(this.searchControl.value || "");
     });
   }
 
-  loadMovies(name: string | null): void {
-    if ((name?.trim())) {
+  loadMovies(name: string): void {
       this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
         this.movies = response.body ? response.body : [];
 
@@ -60,17 +60,10 @@ export class MovieListComponent implements OnInit {
         console.log("Current Page: " + this.currentPage);
         console.log("Page Size: " + this.pageSize);
       });
-    } else {
-      console.log("Empty name provided");
-      this.movies = [];
-      this.totalPages = 0;
-      this.totalItems = 0;
-    }
   }
 
   loadMovie(id: number) {
     this.movieService.getMovie(id).subscribe((response) => {
-
       this.dialog.open(DialogContent, {
         data: response.body,
         width: '400px',

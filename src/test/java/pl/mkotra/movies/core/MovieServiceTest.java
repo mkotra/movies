@@ -46,7 +46,7 @@ class MovieServiceTest {
     }
 
     @Test
-    void getMovieSReturnsValidResult() {
+    void getMoviesReturnsValidResult() {
         //given
         String title = "title";
         int pageNumber = 1;
@@ -70,6 +70,39 @@ class MovieServiceTest {
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
         verify(movieRepository).findByTitleLike(eq("title"), pageableCaptor.capture());
+
+        Pageable capturedPageable = pageableCaptor.getValue();
+        assertThat(capturedPageable).isNotNull();
+        assertThat(capturedPageable.getPageNumber()).isEqualTo(pageNumber);
+        assertThat(capturedPageable.getPageSize()).isEqualTo(pageSize);
+        assertThat(capturedPageable.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "title"));
+    }
+
+
+    @Test
+    void getMoviesWithWildcardReturnsValidResult() {
+        //given
+        int pageNumber = 1;
+        int pageSize = 10;
+        @SuppressWarnings("unchecked")
+        Page<MovieDB> mockResult = mock(Page.class);
+        Pageable mockPageable = mock(Pageable.class);
+        when(mockResult.getPageable()).thenReturn(mockPageable);
+        when(movieRepository.findAll(any(Pageable.class))).thenReturn(mockResult);
+
+        //when
+        Page<Movie> result = movieService.getMovies("%", pageNumber, pageSize);
+
+        // then
+        assertThat(result)
+                .satisfies(page -> {
+                    assertThat(page.getTotalElements()).isEqualTo(0);
+                    assertThat(page.getTotalPages()).isEqualTo(1);
+                    assertThat(page.getPageable()).isEqualTo(mockPageable);
+                });
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(movieRepository).findAll(pageableCaptor.capture());
 
         Pageable capturedPageable = pageableCaptor.getValue();
         assertThat(capturedPageable).isNotNull();

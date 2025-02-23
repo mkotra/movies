@@ -32,8 +32,11 @@ public class ActorService {
     }
 
     public Page<Actor> getActors(String name, Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, ACTORS_SORT);
+        boolean isFindAll = name.chars().allMatch(ch -> ch == '%');
 
-        Page<ActorDB> actorDBPage = actorRepository.findByNameLike(name, PageRequest.of(pageNumber, pageSize, ACTORS_SORT));
+        Page<ActorDB> actorDBPage = isFindAll ? actorRepository.findAll(pageRequest) :
+                actorRepository.findByNameLike(name, pageRequest);
 
         List<Actor> actors = actorDBPage.getContent().stream()
                 .map(ActorMapper.INSTANCE::map)
