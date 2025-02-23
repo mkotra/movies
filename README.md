@@ -4,10 +4,12 @@ This is a Spring Boot application that exposes REST API according to requirement
 api-spec.yaml
 
 ## Overall Goal
+
 The goal was to provide something maybe not 100% functional, but with decent quality and code coverage, to allow further
 improvements.
 
 ## Implemented Features
+
 - **Database storage** to keep data in tables: actors, movies, appearances
 - **Loading data from imdb files**
 - **OpenAPI Swagger UI web client**
@@ -81,20 +83,12 @@ http://localhost:9090
 
 Useful metrics:
 
-```scss
-movies_get_seconds_sum
-
-/
-movies_get_seconds_count
+```promql
+movies_get_seconds_sum/movies_get_seconds_count
 ```
 
-```scss
-max
-
-(
-movies_get_seconds_max
-
-)
+```promql
+max(movies_get_seconds_max)
 ```
 
 ### Exploring API
@@ -130,6 +124,7 @@ http://localhost:4200
 Web UI consumes movies API, please remember about RPS limit that may result with 429 errors.
 
 ## Further improvements proposal
+
 - Drop Primary Key – This may speed up data insertion but could introduce duplicates.
 - Load Files Directly into the Database – Using `LOAD DATA INFILE` can accelerate the process, however it may lead to
   data consistency issues.
@@ -137,12 +132,14 @@ Web UI consumes movies API, please remember about RPS limit that may result with
   performance.
 
 ## Indexing problem
+
 The following query will not use an index due to the way BTREE indexes function:
 
 ```sql
-    EXPLAIN SELECT *
-    FROM movies
-    WHERE title LIKE '%Movie%'; 
+    EXPLAIN
+SELECT *
+FROM movies
+WHERE title LIKE '%Movie%'; 
 ```
 
 Since the search pattern includes a leading wildcard (`%`), MariaDB cannot utilize the BTREE index efficiently and must
