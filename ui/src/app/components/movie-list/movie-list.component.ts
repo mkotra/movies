@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule, FormControl} from '@angular/forms';
 import {MovieService, Movie} from '../../services/movie.service';
 import {MatTableModule} from '@angular/material/table';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogModule} from '@angular/material/dialog';
 
 @Component({
@@ -27,7 +27,10 @@ export class MovieListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMovies("");
-    this.pageControl.valueChanges.subscribe(value => {
+    this.pageControl.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(value => {
       this.currentPage = value ? value : 0;
       console.log("Page manually changed to " + value);
       this.loadMovies(this.searchControl.value || "");
@@ -72,14 +75,14 @@ export class MovieListComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.pageControl.setValue(this.currentPage, { emitEvent: true });
+      this.pageControl.setValue(this.currentPage, {emitEvent: true});
     }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.pageControl.setValue(this.currentPage, { emitEvent: true });
+      this.pageControl.setValue(this.currentPage, {emitEvent: true});
     }
   }
 }
