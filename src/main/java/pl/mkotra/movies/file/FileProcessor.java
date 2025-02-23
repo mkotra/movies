@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public abstract class FileProcessor {
+public abstract sealed class FileProcessor permits ActorsProcessor, AppearancesProcessor, MoviesProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(FileProcessor.class);
 
@@ -25,7 +25,7 @@ public abstract class FileProcessor {
     private final int batchSize;
 
     FileProcessor(JdbcTemplate jdbcTemplate,
-                            FileProcessorProperties fileProcessorProperties) {
+                  FileProcessorProperties fileProcessorProperties) {
         this.jdbcTemplate = jdbcTemplate;
         this.basePath = fileProcessorProperties.getBasePath();
         this.batchSize = fileProcessorProperties.getInsertBatchSize();
@@ -85,13 +85,9 @@ public abstract class FileProcessor {
         logger.info("Post processing completed!");
     }
 
-    protected void preProcess() {
+    protected abstract void preProcess();
 
-    }
-
-    protected void postProcess() {
-
-    }
+    protected abstract void postProcess();
 
     protected abstract String getSql();
 
