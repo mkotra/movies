@@ -18,7 +18,9 @@ improvements.
 - **Prometheus metrics**
 
 ## Prerequisites
+
 To run the application, we will need:
+
 - **Java 23**
 - **Docker** (required for integration tests and can also set up MariaDB and Prometheus UI)
 - **MariaDB**
@@ -66,49 +68,86 @@ http://localhost:8080/actuator/metrics
 ```
 
 Actuator metrics for Prometheus can be accessed here:
+
 ```text
 http://localhost:8080/actuator/prometheus
 ```
 
-Prometheus UI can be accessed here: 
+Prometheus UI can be accessed here:
+
 ```text
 http://localhost:9090
 ```
 
 Useful metrics:
+
 ```scss
-movies_get_seconds_sum / movies_get_seconds_count
+movies_get_seconds_sum
+
+/
+movies_get_seconds_count
 ```
+
 ```scss
-max(movies_get_seconds_max)
+max
+
+(
+movies_get_seconds_max
+
+)
 ```
 
 ### Exploring API
+
 - Please use **SwaggerUI**
 - **Authorize** - please check application.yaml security section to obtain credentials.
 - Populate data into database **populate data API**, please make sure imdb files are stored in proper location.
 - Start using actors API and movies API
 
-### WebUI 
+### WebUI
 
-Simple Angular based Web UI was implemented to display movie list. 
+Simple Angular based Web UI was implemented to display movie list.
 Node.js LTS needs to be installed in the system to build it and run.
 
 Please also install Angular cli (if not installed):
+
 ```sh
 npm install -g @angular/cli
 ```
 
 Then please navigate to the `ui/` directory and run:
+
 ```sh
 ng serve
 ```
 
 Simple Web UI can be accessed here:
+
 ```text
 http://localhost:4200
 ```
 
 Web UI consumes movies API, please remember about RPS limit that may result with 429 errors.
+
+## Further improvements proposal
+- Drop Primary Key – This may speed up data insertion but could introduce duplicates.
+- Load Files Directly into the Database – Using `LOAD DATA INFILE` can accelerate the process, however it may lead to
+  data consistency issues.
+- Scalability Considerations – For very large datasets proposed solution might be insufficient in terms of
+  performance.
+
+## Indexing problem
+The following query will not use an index due to the way BTREE indexes function:
+
+```sql
+    EXPLAIN SELECT *
+    FROM movies
+    WHERE title LIKE '%Movie%'; 
+```
+
+Since the search pattern includes a leading wildcard (`%`), MariaDB cannot utilize the BTREE index efficiently and must
+perform a full table scan instead.
+
+A possible solution to improve query performance is to use **Hibernate Search** backed by Apache Lucene.
 
 [![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
