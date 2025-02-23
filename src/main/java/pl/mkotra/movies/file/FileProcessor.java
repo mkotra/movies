@@ -6,7 +6,6 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.BufferedReader;
@@ -22,19 +21,22 @@ public abstract class FileProcessor {
     private static final Logger logger = LoggerFactory.getLogger(FileProcessor.class);
 
     protected final JdbcTemplate jdbcTemplate;
-    protected final int batchSize;
+    private final String basePath;
+    private final int batchSize;
 
-    protected FileProcessor(JdbcTemplate jdbcTemplate,
-                            @Value("${imdb-files.insert-batch-size}") int batchSize) {
+    FileProcessor(JdbcTemplate jdbcTemplate,
+                            FileProcessorProperties fileProcessorProperties) {
         this.jdbcTemplate = jdbcTemplate;
-        this.batchSize = batchSize;
+        this.basePath = fileProcessorProperties.getBasePath();
+        this.batchSize = fileProcessorProperties.getInsertBatchSize();
     }
 
-    public void process(String filePath, int limit) throws IOException, CsvValidationException {
+    public void process(String fileName, int limit) throws IOException, CsvValidationException {
         logger.info("Pre processing started...");
         preProcess();
         logger.info("Pre processing completed!");
 
+        String filePath = basePath + "/" + fileName;
         try (GZIPInputStream gis = new GZIPInputStream(new FileInputStream(filePath));
              BufferedReader br = new BufferedReader(new InputStreamReader(gis));
              CSVReader reader = new CSVReaderBuilder(br)
@@ -62,7 +64,7 @@ public abstract class FileProcessor {
                     try {
                         insertBatch(batchData);
                     } catch (Exception e) {
-                        logger.error("Error inserting {} - file: {}", e.getMessage(), filePath);
+                        logger.error("Error inserting {} - file: {}", e.getMessage(), fileName);
                     }
                     batchData.clear();
                 }

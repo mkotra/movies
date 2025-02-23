@@ -25,18 +25,15 @@ class PopulateDataController {
     private final MoviesProcessor moviesProcessor;
     private final ActorsProcessor actorsProcessor;
     private final AppearancesProcessor appearancesProcessor;
-    private final String imdbFilesBasePath;
 
     public PopulateDataController(JdbcTemplate jdbcTemplate,
                                   MoviesProcessor moviesProcessor,
                                   ActorsProcessor actorsProcessor,
-                                  AppearancesProcessor appearancesProcessor,
-                                  @Value("${imdb-files.base-path}") String imdbFilesBasePath) {
+                                  AppearancesProcessor appearancesProcessor) {
         this.jdbcTemplate = jdbcTemplate;
         this.moviesProcessor = moviesProcessor;
         this.actorsProcessor = actorsProcessor;
         this.appearancesProcessor = appearancesProcessor;
-        this.imdbFilesBasePath = imdbFilesBasePath;
     }
 
     @PostMapping("/populate")
@@ -48,13 +45,13 @@ class PopulateDataController {
 
         logger.info("Files processing started...");
 
-        moviesProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
+        moviesProcessor.process("title.basics.tsv.gz", limit);
         logger.info("Movies processing competed!");
 
-        actorsProcessor.process(imdbFilesBasePath + "/name.basics.tsv.gz", limit);
+        actorsProcessor.process("name.basics.tsv.gz", limit);
         logger.info("Actors processing competed!");
 
-        appearancesProcessor.process(imdbFilesBasePath + "/title.principals.tsv.gz", limit);
+        appearancesProcessor.process("title.principals.tsv.gz", limit);
         logger.info("Appearances processing competed!");
     }
 }

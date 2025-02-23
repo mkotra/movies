@@ -4,14 +4,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AppearancesProcessor extends FileProcessor {
+public final class AppearancesProcessor extends FileProcessor {
 
     private static final String DROP_INDEX = "ALTER TABLE appearances DROP INDEX IF EXISTS idx_appearances_actor_id;";
     private static final String SQL = "INSERT INTO appearances(movie_id, actor_id, character_name ) VALUES(?, ?, ?);";
     private static final String RECREATE_INDEX = "CREATE INDEX idx_appearances_actor_id ON appearances(actor_id);";
 
-    AppearancesProcessor(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    AppearancesProcessor(JdbcTemplate jdbcTemplate, FileProcessorProperties fileProcessorProperties) {
+        super(jdbcTemplate, fileProcessorProperties);
     }
 
     @Override
