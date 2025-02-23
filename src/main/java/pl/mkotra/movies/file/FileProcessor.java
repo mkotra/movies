@@ -6,6 +6,7 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.BufferedReader;
@@ -18,18 +19,22 @@ import java.util.zip.GZIPInputStream;
 
 public abstract class FileProcessor {
 
-    private static final int BATCH_SIZE = 1000;
-
     private static final Logger logger = LoggerFactory.getLogger(FileProcessor.class);
 
     protected final JdbcTemplate jdbcTemplate;
+    protected final int batchSize;
 
-    protected FileProcessor(JdbcTemplate jdbcTemplate) {
+    protected FileProcessor(JdbcTemplate jdbcTemplate,
+                            @Value("${imdb-files.insert-batch-size}") int batchSize) {
         this.jdbcTemplate = jdbcTemplate;
+        this.batchSize = batchSize;
     }
 
     public void process(String filePath, int limit) throws IOException, CsvValidationException {
+        logger.info("Pre processing started...");
         preProcess();
+        logger.info("Pre processing completed!");
+
         try (GZIPInputStream gis = new GZIPInputStream(new FileInputStream(filePath));
              BufferedReader br = new BufferedReader(new InputStreamReader(gis));
              CSVReader reader = new CSVReaderBuilder(br)
@@ -52,8 +57,8 @@ public abstract class FileProcessor {
                     logger.error("Cannot parse row {} ", lineNumber);
                 }
 
-                if (batchData.size() >= BATCH_SIZE) {
-                    logger.info("Inserting batch of {}, current line number is: {}", BATCH_SIZE, lineNumber);
+                if (batchData.size() >= batchSize) {
+                    logger.info("Inserting batch of {}, current line number is: {}", batchSize, lineNumber);
                     try {
                         insertBatch(batchData);
                     } catch (Exception e) {
@@ -72,7 +77,10 @@ public abstract class FileProcessor {
 
             logger.info("All {} records inserted successfully.", lineNumber);
         }
+
+        logger.info("Post processing started...");
         postProcess();
+        logger.info("Post processing completed!");
     }
 
     protected void preProcess() {

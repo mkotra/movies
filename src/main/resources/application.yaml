@@ -68,6 +68,7 @@ spring-doc:
 
 imdb-files:
   base-path: /imdb
+  insert-batch-size: 1000
 
 logging:
   level:

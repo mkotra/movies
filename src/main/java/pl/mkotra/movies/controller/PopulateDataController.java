@@ -47,9 +47,15 @@ class PopulateDataController {
         jdbcTemplate.execute("TRUNCATE TABLE movies;");
 
         logger.info("Files processing started...");
+
         moviesProcessor.process(imdbFilesBasePath + "/title.basics.tsv.gz", limit);
+        logger.info("Movies processing competed!");
+
         actorsProcessor.process(imdbFilesBasePath + "/name.basics.tsv.gz", limit);
+        logger.info("Actors processing competed!");
+
         appearancesProcessor.process(imdbFilesBasePath + "/title.principals.tsv.gz", limit);
+        logger.info("Appearances processing competed!");
     }
 }
 
