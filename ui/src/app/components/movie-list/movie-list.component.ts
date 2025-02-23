@@ -26,14 +26,13 @@ export class MovieListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadMovies("");
     this.pageControl.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(value => {
       this.currentPage = value ? value : 0;
       console.log("Page manually changed to " + value);
-      this.loadMovies(this.searchControl.value || "");
+      this.loadMovies(this.searchControl.value);
     });
 
     this.searchControl.valueChanges.pipe(
@@ -42,24 +41,31 @@ export class MovieListComponent implements OnInit {
     ).subscribe(value => {
       this.currentPage = 1;
       console.log("Search text changed to " + value);
-      this.loadMovies(this.searchControl.value || "");
+      this.loadMovies(this.searchControl.value);
     });
   }
 
-  loadMovies(name: string): void {
-    this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
-      this.movies = response.body ? response.body : [];
+  loadMovies(name: string | null): void {
+    if ((name?.trim())) {
+      this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
+        this.movies = response.body ? response.body : [];
 
-      const totalSizeHeader = response.headers.get('X-Total-Size');
-      this.totalItems = totalSizeHeader ? Number(totalSizeHeader) : 0;
+        const totalSizeHeader = response.headers.get('X-Total-Size');
+        this.totalItems = totalSizeHeader ? Number(totalSizeHeader) : 0;
 
-      const totalPagesHeader = response.headers.get('X-Total-Pages');
-      this.totalPages = totalPagesHeader ? Number(totalPagesHeader) : 0;
+        const totalPagesHeader = response.headers.get('X-Total-Pages');
+        this.totalPages = totalPagesHeader ? Number(totalPagesHeader) : 0;
 
-      console.log("Total: " + this.totalItems);
-      console.log("Current Page: " + this.currentPage);
-      console.log("Page Size: " + this.pageSize);
-    });
+        console.log("Total: " + this.totalItems);
+        console.log("Current Page: " + this.currentPage);
+        console.log("Page Size: " + this.pageSize);
+      });
+    } else {
+      console.log("Empty name provided");
+      this.movies = [];
+      this.totalPages = 0;
+      this.totalItems = 0;
+    }
   }
 
   loadMovie(id: number) {

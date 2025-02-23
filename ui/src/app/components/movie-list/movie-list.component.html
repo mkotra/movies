@@ -27,8 +27,11 @@
     <tr mat-row *matRowDef="let row; columns: ['id', 'title', 'year']"></tr>
   </table>
 
+  <div *ngIf="!movies || movies.length === 0">
+    No movies to display
+  </div>
 
-  <div class="pagination-controls">
+  <div *ngIf="movies && movies.length > 0" class="pagination-controls">
     <button (click)="prevPage()" [disabled]="currentPage == 1">Previous</button>
 
     <span>| Page <input type="number" [formControl]="pageControl"> - out of total {{totalPages}} pages</span>
