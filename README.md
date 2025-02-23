@@ -136,7 +136,7 @@ Web UI consumes movies API, please remember about RPS limit that may result with
 The following query will not use an index due to the way BTREE indexes function:
 
 ```sql
-    EXPLAIN
+EXPLAIN
 SELECT *
 FROM movies
 WHERE title LIKE '%Movie%'; 
