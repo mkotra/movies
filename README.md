@@ -148,6 +148,18 @@ The following query will not use an index due to the way BTREE indexes function:
 Since the search pattern includes a leading wildcard (`%`), MariaDB cannot utilize the BTREE index efficiently and must
 perform a full table scan instead.
 
+Indexes can also consume a significant amount of disk space, especially as the dataset grows:
+
+```sql
+SELECT table_name,
+       ROUND(data_length / 1024 / 1024, 2)                  AS data_size_mb,
+       ROUND(index_length / 1024 / 1024, 2)                 AS index_size_mb,
+       ROUND((data_length + index_length) / 1024 / 1024, 2) AS total_size_mb
+FROM information_schema.tables
+WHERE table_schema = 'movies_db'
+  AND table_name = 'movies';
+```
+
 A possible solution to improve query performance is to use **Hibernate Search** backed by Apache Lucene.
 
 [![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
