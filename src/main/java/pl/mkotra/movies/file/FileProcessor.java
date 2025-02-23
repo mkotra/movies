@@ -60,7 +60,7 @@ public abstract sealed class FileProcessor permits ActorsProcessor, AppearancesP
                 }
 
                 if (batchData.size() >= batchSize) {
-                    logger.info("Inserting batch of {}, current line number is: {}", batchSize, lineNumber);
+                    logger.info("Inserting batch of {}, {} - current line number is: {}", batchSize, fileName, lineNumber);
                     try {
                         insertBatch(batchData);
                     } catch (Exception e) {
@@ -77,10 +77,10 @@ public abstract sealed class FileProcessor permits ActorsProcessor, AppearancesP
                 insertBatch(batchData);
             }
 
-            logger.info("All {} records inserted successfully.", lineNumber);
+            logger.info("All {} records from {} inserted successfully.", lineNumber, fileName);
         }
 
-        logger.info("Post processing started...");
+        logger.info("Post processing for {} started...", fileName);
         postProcess();
         logger.info("Post processing completed!");
     }
