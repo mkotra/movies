@@ -105,6 +105,14 @@ class ActorsControllerIT extends BaseIT {
     }
 
     @Test
+    void actorsIdAppearancesGetReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/actors/{id}/appearances", 0)
+                        .with(httpBasic(USER, PASSWORD)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void actorsIdGetReturnsValidResponse() throws Exception {
 
         mockMvc.perform(get("/actors/{id}", 2)

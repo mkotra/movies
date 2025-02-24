@@ -1,6 +1,10 @@
 package pl.mkotra.movies.core;
 
-import org.springframework.data.domain.*;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.mkotra.movies.model.Actor;
 import pl.mkotra.movies.model.Appearance;
@@ -9,11 +13,10 @@ import pl.mkotra.movies.storage.AppearanceRepository;
 import pl.mkotra.movies.storage.entities.ActorDB;
 import pl.mkotra.movies.storage.entities.AppearanceDB;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static pl.mkotra.movies.core.CacheService.CacheKey.*;
+import static pl.mkotra.movies.core.CacheService.CacheKey.ACTORS_COUNT;
 
 @Service
 public class ActorService {
@@ -60,7 +63,7 @@ public class ActorService {
                             .toList();
                     return new PageImpl<>(appearances, appearancesDB.getPageable(), appearancesDB.getTotalElements());
                 })
-                .orElseGet(() -> new PageImpl<>(Collections.emptyList(), Pageable.ofSize(pageSize), 0));
+                .orElseThrow(() -> new EntityNotFoundException("Actor not found with ID: " + actorId));
     }
 
     private Page<ActorDB> createPageWithoutCount(int pageNumber, int pageSize) {

@@ -12,7 +12,6 @@ import pl.mkotra.movies.storage.entities.MovieDB;
 import java.util.List;
 import java.util.Optional;
 
-import static pl.mkotra.movies.core.CacheService.CacheKey.ACTORS_COUNT;
 import static pl.mkotra.movies.core.CacheService.CacheKey.MOVIES_COUNT;
 
 @Service

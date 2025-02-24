@@ -1,5 +1,6 @@
 package pl.mkotra.movies.core;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
@@ -12,11 +13,11 @@ import pl.mkotra.movies.storage.AppearanceRepository;
 import pl.mkotra.movies.storage.entities.ActorDB;
 import pl.mkotra.movies.storage.entities.AppearanceDB;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -159,19 +160,14 @@ class ActorServiceTest {
         when(actorRepository.findById(actorId)).thenReturn(Optional.empty());
 
         //when
-        Page<Appearance> result = actorService.getAppearances(actorId, 1, pageSize);
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> {
+                    actorService.getAppearances(actorId, 1, pageSize);
+                })
+                .withMessage("Actor not found with ID: 5");
 
         //then
         verify(actorRepository).findById(actorId);
         verifyNoInteractions(appearanceRepository);
-
-        // then
-        assertThat(result)
-                .satisfies(page -> {
-                    assertThat(page.getTotalElements()).isEqualTo(0);
-                    assertThat(page.getTotalPages()).isEqualTo(0);
-                    assertThat(page.getContent()).isEqualTo(Collections.emptyList());
-                    assertThat(page.getPageable()).isEqualTo(Pageable.ofSize(pageSize));
-                });
     }
 }
