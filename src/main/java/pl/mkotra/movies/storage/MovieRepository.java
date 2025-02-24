@@ -12,9 +12,8 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<MovieDB, Integer> {
 
-    @Query(value = "SELECT * FROM movies LIMIT :size OFFSET :offset", nativeQuery = true)
+    @Query(value = "SELECT * FROM movies order by title LIMIT :size OFFSET :offset", nativeQuery = true)
     List<MovieDB> findWithoutCount(int size, int offset);
 
-    @Query("SELECT m FROM MovieDB m WHERE m.title LIKE :title")
     Page<MovieDB> findByTitleLike(String title, Pageable pageable);
 }

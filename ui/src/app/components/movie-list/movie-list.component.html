@@ -34,8 +34,8 @@
   <div *ngIf="movies && movies.length > 0" class="pagination-controls">
     <button (click)="prevPage()" [disabled]="currentPage == 1">Previous</button>
 
-    <span>| Page <input type="number" [formControl]="pageControl"> - out of total {{totalPages}} pages</span>
-    <span> | Page size: {{pageSize}} | Total elements: {{totalItems}} |</span>
+    <span>| Page <input type="number" [formControl]="pageControl"> - out of total {{totalPages | number}} pages</span>
+    <span> | Page size: {{pageSize}} | Total elements: {{totalItems | number}} |</span>
 
     <button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</button>
   </div>
