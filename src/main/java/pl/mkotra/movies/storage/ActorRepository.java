@@ -7,8 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.mkotra.movies.storage.entities.ActorDB;
 
+import java.util.List;
+
 @Repository
 public interface ActorRepository extends JpaRepository<ActorDB, Integer> {
+
+    @Query(value = "SELECT * FROM actors LIMIT :size OFFSET :offset", nativeQuery = true)
+    List<ActorDB> findWithoutCount(int size, int offset);
 
     @Query("SELECT a FROM ActorDB a WHERE a.name LIKE :name")
     Page<ActorDB> findByNameLike(String name, Pageable pageable);

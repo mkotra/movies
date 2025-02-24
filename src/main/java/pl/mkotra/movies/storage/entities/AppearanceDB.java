@@ -1,8 +1,10 @@
 package pl.mkotra.movies.storage.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Immutable;
 
 @Entity
+@Immutable
 @Table(name = "appearances")
 public class AppearanceDB {
 

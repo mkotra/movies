@@ -2,6 +2,7 @@ package pl.mkotra.movies.file;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import pl.mkotra.movies.core.CacheService;
 
 @Component
 public final class ActorsProcessor extends FileProcessor {
@@ -10,9 +11,9 @@ public final class ActorsProcessor extends FileProcessor {
     private static final String SQL = "INSERT INTO actors (id, name) VALUES (?, ?);";
     private static final String RECREATE_INDEX = "CREATE INDEX idx_actors_name ON actors(name);";
 
-    ActorsProcessor(JdbcTemplate jdbcTemplate,
+    ActorsProcessor(JdbcTemplate jdbcTemplate, CacheService cacheService,
                               FileProcessorProperties fileProcessorProperties) {
-        super(jdbcTemplate, fileProcessorProperties);
+        super(jdbcTemplate, cacheService, fileProcessorProperties);
     }
 
     @Override
@@ -29,6 +30,7 @@ public final class ActorsProcessor extends FileProcessor {
     protected void postProcess() {
         jdbcTemplate.execute(DROP_INDEX);
         jdbcTemplate.execute(RECREATE_INDEX);
+        cacheService.invalidate(CacheService.CacheKey.ACTORS_COUNT);
     }
 
     @Override

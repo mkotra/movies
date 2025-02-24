@@ -47,19 +47,19 @@ export class MovieListComponent implements OnInit {
   }
 
   loadMovies(name: string): void {
-      this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
-        this.movies = response.body ? response.body : [];
+    this.movieService.getMovies(this.currentPage - 1, this.pageSize, name).subscribe((response) => {
+      this.movies = response.body ? response.body : [];
 
-        const totalSizeHeader = response.headers.get('X-Total-Size');
-        this.totalItems = totalSizeHeader ? Number(totalSizeHeader) : 0;
+      const totalSizeHeader = response.headers.get('X-Total-Size');
+      this.totalItems = totalSizeHeader ? Number(totalSizeHeader) : 0;
 
-        const totalPagesHeader = response.headers.get('X-Total-Pages');
-        this.totalPages = totalPagesHeader ? Number(totalPagesHeader) : 0;
+      const totalPagesHeader = response.headers.get('X-Total-Pages');
+      this.totalPages = totalPagesHeader ? Number(totalPagesHeader) : 0;
 
-        console.log("Total: " + this.totalItems);
-        console.log("Current Page: " + this.currentPage);
-        console.log("Page Size: " + this.pageSize);
-      });
+      console.log("Total: " + this.totalItems);
+      console.log("Current Page: " + this.currentPage);
+      console.log("Page Size: " + this.pageSize);
+    });
   }
 
   loadMovie(id: number) {

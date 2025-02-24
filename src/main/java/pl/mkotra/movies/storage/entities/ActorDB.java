@@ -1,10 +1,12 @@
 package pl.mkotra.movies.storage.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Immutable;
 
 import java.util.Set;
 
 @Entity
+@Immutable
 @Table(name = "actors")
 public class ActorDB {
 

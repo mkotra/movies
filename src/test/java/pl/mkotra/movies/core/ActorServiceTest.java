@@ -13,18 +13,21 @@ import pl.mkotra.movies.storage.entities.ActorDB;
 import pl.mkotra.movies.storage.entities.AppearanceDB;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static pl.mkotra.movies.core.CacheService.CacheKey.ACTORS_COUNT;
 
 class ActorServiceTest {
 
-    ActorRepository actorRepository = mock(ActorRepository.class);
-    AppearanceRepository appearanceRepository = mock(AppearanceRepository.class);
-    ActorService actorService = new ActorService(actorRepository, appearanceRepository);
+    private final ActorRepository actorRepository = mock(ActorRepository.class);
+    private final AppearanceRepository appearanceRepository = mock(AppearanceRepository.class);
+    private final CacheService cacheService = mock(CacheService.class);
+    private final ActorService actorService = new ActorService(actorRepository, appearanceRepository, cacheService);
 
     @Test
     void getActorReturnsValidResult() {
@@ -85,13 +88,13 @@ class ActorServiceTest {
     @Test
     void getActorsWithWildcardReturnsValidResult() {
         //given
-        int pageNumber = 1;
+        int pageNumber = 0;
         int pageSize = 10;
         @SuppressWarnings("unchecked")
-        Page<ActorDB> mockResult = mock(Page.class);
-        Pageable mockPageable = mock(Pageable.class);
-        when(mockResult.getPageable()).thenReturn(mockPageable);
-        when(actorRepository.findAll(any(Pageable.class))).thenReturn(mockResult);
+        List<ActorDB> mockResult = List.of(mock(ActorDB.class));
+        when(cacheService.load(ACTORS_COUNT)).thenReturn(1L);
+
+        when(actorRepository.findWithoutCount(pageSize, pageNumber)).thenReturn(mockResult);
 
         //when
         Page<Actor> result = actorService.getActors("%", pageNumber, pageSize);
@@ -99,19 +102,16 @@ class ActorServiceTest {
         // then
         assertThat(result)
                 .satisfies(page -> {
-                    assertThat(page.getTotalElements()).isEqualTo(0);
+                    assertThat(page.getContent().size()).isEqualTo(1);
                     assertThat(page.getTotalPages()).isEqualTo(1);
-                    assertThat(page.getPageable()).isEqualTo(mockPageable);
+                    assertThat(page.getTotalElements()).isEqualTo(1);
+                    assertThat(page.getPageable().getPageNumber()).isEqualTo(pageNumber);
+                    assertThat(page.getPageable().getPageSize()).isEqualTo(pageSize);
+                    assertThat(page.getPageable().getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "name"));
                 });
 
-        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(actorRepository).findAll(pageableCaptor.capture());
-
-        Pageable capturedPageable = pageableCaptor.getValue();
-        assertThat(capturedPageable).isNotNull();
-        assertThat(capturedPageable.getPageNumber()).isEqualTo(pageNumber);
-        assertThat(capturedPageable.getPageSize()).isEqualTo(pageSize);
-        assertThat(capturedPageable.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "name"));
+        verify(actorRepository).findWithoutCount(pageSize, pageNumber);
+        verify(cacheService).get(ACTORS_COUNT);
     }
 
     @Test

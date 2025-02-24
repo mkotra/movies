@@ -21,6 +21,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 
+		<caffeine.version>3.1.8</caffeine.version>
 		<mmariadb.version>3.1.0</mmariadb.version>
 		<springdoc.version>2.8.4</springdoc.version>
 		<testcontainers.version>1.20.4</testcontainers.version>
@@ -71,6 +72,12 @@
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>${opencsv.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>${caffeine.version}</version>
 		</dependency>
 
 		<dependency>

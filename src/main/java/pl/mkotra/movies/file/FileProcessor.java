@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import pl.mkotra.movies.core.CacheService;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -21,12 +22,14 @@ public abstract sealed class FileProcessor permits ActorsProcessor, AppearancesP
     private static final Logger logger = LoggerFactory.getLogger(FileProcessor.class);
 
     protected final JdbcTemplate jdbcTemplate;
+    protected final CacheService cacheService;
     private final String basePath;
     private final int batchSize;
 
-    FileProcessor(JdbcTemplate jdbcTemplate,
+    FileProcessor(JdbcTemplate jdbcTemplate, CacheService cacheService,
                   FileProcessorProperties fileProcessorProperties) {
         this.jdbcTemplate = jdbcTemplate;
+        this.cacheService = cacheService;
         this.basePath = fileProcessorProperties.getBasePath();
         this.batchSize = fileProcessorProperties.getInsertBatchSize();
     }

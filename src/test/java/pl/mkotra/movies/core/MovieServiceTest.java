@@ -9,15 +9,18 @@ import pl.mkotra.movies.model.Movie;
 import pl.mkotra.movies.storage.MovieRepository;
 import pl.mkotra.movies.storage.entities.MovieDB;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
+import static pl.mkotra.movies.core.CacheService.CacheKey.MOVIES_COUNT;
 
 class MovieServiceTest {
 
-    MovieRepository movieRepository = mock(MovieRepository.class);
-    MovieService movieService = new MovieService(movieRepository);
+    private final MovieRepository movieRepository = mock(MovieRepository.class);
+    private final CacheService cachingService = mock(CacheService.class);
+    private final MovieService movieService = new MovieService(movieRepository, cachingService);
 
     @Test
     void getMovieReturnsValidResult() {
@@ -78,17 +81,15 @@ class MovieServiceTest {
         assertThat(capturedPageable.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "title"));
     }
 
-
     @Test
     void getMoviesWithWildcardReturnsValidResult() {
         //given
-        int pageNumber = 1;
+        int pageNumber = 0;
         int pageSize = 10;
         @SuppressWarnings("unchecked")
-        Page<MovieDB> mockResult = mock(Page.class);
-        Pageable mockPageable = mock(Pageable.class);
-        when(mockResult.getPageable()).thenReturn(mockPageable);
-        when(movieRepository.findAll(any(Pageable.class))).thenReturn(mockResult);
+        List<MovieDB> mockResult = List.of(mock(MovieDB.class));
+        when(movieRepository.findWithoutCount(pageSize, pageNumber)).thenReturn(mockResult);
+        when(cachingService.get(CacheService.CacheKey.MOVIES_COUNT)).thenReturn(1L);
 
         //when
         Page<Movie> result = movieService.getMovies("%", pageNumber, pageSize);
@@ -96,18 +97,15 @@ class MovieServiceTest {
         // then
         assertThat(result)
                 .satisfies(page -> {
-                    assertThat(page.getTotalElements()).isEqualTo(0);
+                    assertThat(page.getContent().size()).isEqualTo(1);
                     assertThat(page.getTotalPages()).isEqualTo(1);
-                    assertThat(page.getPageable()).isEqualTo(mockPageable);
+                    assertThat(page.getTotalElements()).isEqualTo(1);
+                    assertThat(page.getPageable().getPageNumber()).isEqualTo(pageNumber);
+                    assertThat(page.getPageable().getPageSize()).isEqualTo(pageSize);
+                    assertThat(page.getPageable().getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "title"));
                 });
 
-        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(movieRepository).findAll(pageableCaptor.capture());
-
-        Pageable capturedPageable = pageableCaptor.getValue();
-        assertThat(capturedPageable).isNotNull();
-        assertThat(capturedPageable.getPageNumber()).isEqualTo(pageNumber);
-        assertThat(capturedPageable.getPageSize()).isEqualTo(pageSize);
-        assertThat(capturedPageable.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "title"));
+        verify(movieRepository).findWithoutCount(pageSize, pageNumber);
+        verify(cachingService).get(MOVIES_COUNT);
     }
 }

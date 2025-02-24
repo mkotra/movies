@@ -3,6 +3,7 @@ package pl.mkotra.movies.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.mkotra.movies.BaseIT;
+import pl.mkotra.movies.core.CacheService;
 import pl.mkotra.movies.storage.ActorRepository;
 import pl.mkotra.movies.storage.AppearanceRepository;
 import pl.mkotra.movies.storage.MovieRepository;
@@ -21,6 +22,8 @@ public class PopulateDataIT extends BaseIT {
     private ActorRepository actorRepository;
     @Autowired
     private AppearanceRepository appearanceRepository;
+    @Autowired
+    private CacheService cacheService;
 
     @Test
     void populateSavesDataFromFilesIntoDB() throws Exception {
@@ -39,5 +42,8 @@ public class PopulateDataIT extends BaseIT {
         assertThat(movieRepository.count()).isEqualTo(limit);
         assertThat(actorRepository.count()).isEqualTo(limit);
         assertThat(appearanceRepository.count()).isEqualTo(limit);
+
+        assertThat(cacheService.get(CacheService.CacheKey.MOVIES_COUNT)).isEqualTo(limit);
+        assertThat(cacheService.get(CacheService.CacheKey.ACTORS_COUNT)).isEqualTo(limit);
     }
 }
