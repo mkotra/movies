@@ -133,13 +133,20 @@ Web UI consumes movies API, please remember about RPS limit that may result with
 
 ## Indexing problem
 
-The following query will not use an index due to the way BTREE indexes function:
+The following queries will not use an index due to the way BTREE indexes function:
 
 ```sql
 EXPLAIN
 SELECT *
 FROM movies
 WHERE title LIKE '%Movie%'; 
+```
+
+```sql
+EXPLAIN
+SELECT *
+FROM movies
+WHERE title LIKE '%Movie'; 
 ```
 
 Since the search pattern includes a leading wildcard (`%`), MariaDB cannot utilize the BTREE index efficiently and must
