@@ -1,5 +1,6 @@
 package pl.mkotra.movies.controller.ratelimitter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -21,11 +23,14 @@ import static org.mockito.Mockito.*;
 
 class RateLimiterFilterTest {
 
+    private static final String RESPONSE_BODY = "RESPONSE_BODY";
+
     private RateLimiterFilter rateLimiterFilter;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
     private MeterRegistry meterRegistry;
+    private ObjectMapper objectMapper;
     private PrintWriter writer;
 
     @BeforeEach
@@ -35,12 +40,14 @@ class RateLimiterFilterTest {
         when(rateLimiterProperties.getMaxRequests()).thenReturn(5);
         when(rateLimiterProperties.getTimeWindow()).thenReturn(TimeUnit.MINUTES.toMillis(1));
         meterRegistry = mock(MeterRegistry.class);
+        objectMapper = mock(ObjectMapper.class);
 
-        rateLimiterFilter = new RateLimiterFilter(rateLimiterProperties, meterRegistry);
+        rateLimiterFilter = new RateLimiterFilter(rateLimiterProperties, meterRegistry, objectMapper);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
+        when(objectMapper.writeValueAsString(any(ProblemDetail.class))).thenReturn(RESPONSE_BODY);
         writer = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(writer);
     }
@@ -69,7 +76,7 @@ class RateLimiterFilterTest {
 
         //then
         verify(response).setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-        verify(writer).write("Too many requests for user user - please try again later.");
+        verify(writer).write(RESPONSE_BODY);
         verify(meterRegistry).counter(anyString(), any(String[].class));
 
         int requestCount = rateLimiterFilter.getUserRequests().get("user").getRequestCount();
