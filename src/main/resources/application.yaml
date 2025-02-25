@@ -2,8 +2,13 @@ spring:
   application:
     name: @project.name@
     version: @project.version@
+
   main:
     banner-mode: "LOG"
+
+  web:
+    locale: en_US
+    locale-resolver: fixed
 
   datasource:
     url: jdbc:mariadb://localhost:3306/movies_db
