@@ -1,5 +1,6 @@
 package pl.mkotra.movies.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,10 +34,17 @@ public class MovieService {
 
     public Page<Movie> getMovies(String title, Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, MOVIES_SORT);
+
         boolean isAllWildcard = title.chars().allMatch(ch -> ch == '%');
-        Page<MovieDB> movieDBPage = isAllWildcard
-                ? createPageWithoutCount(pageNumber, pageSize)
-                : movieRepository.findByTitleLike(title, pageRequest);
+        SearchType searchType = isAllWildcard ? SearchType.ALL_WILDCARD
+                : title.startsWith("%") ? SearchType.TITLE_REVERSED
+                : SearchType.TITLE_NORMAL;
+
+        Page<MovieDB> movieDBPage = switch (searchType) {
+            case ALL_WILDCARD -> createPageWithoutCount(pageNumber, pageSize);
+            case TITLE_REVERSED -> movieRepository.findByTitleReversedLike(StringUtils.reverse(title), pageRequest);
+            case TITLE_NORMAL -> movieRepository.findByTitleLike(title, pageRequest);
+        };
 
         List<Movie> movies = movieDBPage.getContent().stream()
                 .map(MovieMapper.INSTANCE::map)
@@ -49,5 +57,9 @@ public class MovieService {
         List<MovieDB> movieDBS = movieRepository.findWithoutCount(pageSize, pageNumber);
         long totalCount = cachingService.get(MOVIES_COUNT);
         return new PageImpl<>(movieDBS, PageRequest.of(pageNumber, pageSize, MOVIES_SORT), totalCount);
+    }
+
+    private enum SearchType {
+        ALL_WILDCARD, TITLE_REVERSED, TITLE_NORMAL
     }
 }

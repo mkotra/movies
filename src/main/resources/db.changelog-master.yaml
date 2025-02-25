@@ -16,6 +16,9 @@ databaseChangeLog:
                   name: title
                   type: varchar(255)
               - column:
+                  name: title_reversed
+                  type: varchar(255)
+              - column:
                   name: year
                   type: varchar(4)
             indexes:
@@ -24,6 +27,11 @@ databaseChangeLog:
                   columns:
                     - column:
                         name: title
+              - index:
+                  name: idx_movies_title_reversed
+                  columns:
+                    - column:
+                        name: title_reversed
 
         - createTable:
             tableName: actors

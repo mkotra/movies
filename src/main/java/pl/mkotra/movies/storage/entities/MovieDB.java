@@ -16,6 +16,9 @@ public class MovieDB {
     @Column
     private String title;
 
+    @Column(name = "title_reversed")
+    private String titleReversed;
+
     @Column
     private String year;
 

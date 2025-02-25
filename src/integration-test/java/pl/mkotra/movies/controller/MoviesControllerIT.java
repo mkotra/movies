@@ -15,8 +15,8 @@ class MoviesControllerIT extends BaseIT {
 
     @BeforeEach
     void setupDatabase() {
-        jdbcTemplate.execute("INSERT INTO movies (id, title, year) VALUES (1, 'The Godfather', '1972');");
-        jdbcTemplate.execute("INSERT INTO movies (id, title, year) VALUES (2, 'The Shawshank Redemption', '1994');");
+        jdbcTemplate.execute("INSERT INTO movies (id, title, title_reversed, year) VALUES (1, 'The Godfather', REVERSE('The Godfather'), '1972');");
+        jdbcTemplate.execute("INSERT INTO movies (id, title, title_reversed, year) VALUES (2, 'The Shawshank Redemption', REVERSE('The Shawshank Redemption'), '1994');");
     }
 
     @Test

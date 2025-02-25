@@ -15,7 +15,7 @@ class ActorsControllerIT extends BaseIT {
 
     @BeforeEach
     void setupDatabase() {
-        jdbcTemplate.execute("INSERT INTO movies (id, title, year) VALUES (1, 'Inception', '2010');");
+        jdbcTemplate.execute("INSERT INTO movies (id, title, title_reversed, year) VALUES (1, 'Inception', REVERSE('Inception'), '2010');");
         jdbcTemplate.execute("INSERT INTO actors (id, name) VALUES (2, 'Leonardo DiCaprio');");
         jdbcTemplate.execute("INSERT INTO appearances(movie_id, actor_id, character_name ) VALUES(1, 2, 'Cobb');");
     }

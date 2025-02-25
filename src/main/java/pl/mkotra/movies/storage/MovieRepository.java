@@ -16,4 +16,6 @@ public interface MovieRepository extends JpaRepository<MovieDB, Integer> {
     List<MovieDB> findWithoutCount(int size, int offset);
 
     Page<MovieDB> findByTitleLike(String title, Pageable pageable);
+
+    Page<MovieDB> findByTitleReversedLike(String title, Pageable pageable);
 }
