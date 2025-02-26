@@ -24,6 +24,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        search:
+          backend:
+            type: lucene
+            directory:
+              type: local-filesystem
+              root: .lucene-index
 
   liquibase:
     enabled: true

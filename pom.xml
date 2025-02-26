@@ -22,6 +22,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <caffeine.version>3.1.8</caffeine.version>
+        <hibernate-search.version>7.2.2.Final</hibernate-search.version>
         <mmariadb.version>3.1.0</mmariadb.version>
         <springdoc.version>2.8.4</springdoc.version>
         <testcontainers.version>1.20.4</testcontainers.version>
@@ -90,6 +91,17 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-mapper-orm</artifactId>
+            <version>${hibernate-search.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.search</groupId>
+            <artifactId>hibernate-search-backend-lucene</artifactId>
+            <version>${hibernate-search.version}</version>
         </dependency>
 
         <dependency>

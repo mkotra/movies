@@ -2,13 +2,13 @@ package pl.mkotra.movies.controller;
 
 import com.opencsv.exceptions.CsvValidationException;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.mkotra.movies.core.SearchService;
 import pl.mkotra.movies.file.ActorsProcessor;
 import pl.mkotra.movies.file.AppearancesProcessor;
 import pl.mkotra.movies.file.MoviesProcessor;
@@ -25,15 +25,18 @@ class PopulateDataController {
     private final MoviesProcessor moviesProcessor;
     private final ActorsProcessor actorsProcessor;
     private final AppearancesProcessor appearancesProcessor;
+    private final SearchService searchService;
 
     public PopulateDataController(JdbcTemplate jdbcTemplate,
                                   MoviesProcessor moviesProcessor,
                                   ActorsProcessor actorsProcessor,
-                                  AppearancesProcessor appearancesProcessor) {
+                                  AppearancesProcessor appearancesProcessor,
+                                  SearchService searchService) {
         this.jdbcTemplate = jdbcTemplate;
         this.moviesProcessor = moviesProcessor;
         this.actorsProcessor = actorsProcessor;
         this.appearancesProcessor = appearancesProcessor;
+        this.searchService = searchService;
     }
 
     @PostMapping("/populate")
@@ -53,6 +56,9 @@ class PopulateDataController {
 
         appearancesProcessor.process("title.principals.tsv.gz", limit);
         logger.info("Appearances processing competed!");
+
+        //initializes Lucene Index rebuild (supports movies only).
+        searchService.initialize();
     }
 }
 

@@ -41,7 +41,8 @@ public abstract class BaseIT {
         registry.add("spring.datasource.url", MARIADB::getJdbcUrl);
         registry.add("spring.datasource.username", MARIADB::getUsername);
         registry.add("spring.datasource.password", MARIADB::getPassword);
-        registry.add("imdb-files.base-path", () -> System.getProperty("user.dir") + "/src//integration-test/resources/");
+        registry.add("spring.jpa.properties.hibernate.search.backend.directory.type", () -> "local-heap");
+        registry.add("imdb-files.base-path", () -> System.getProperty("user.dir") + "/src/integration-test/resources/");
         registry.add("rate-limiter.max-requests", () -> 1000);
         registry.add("rate-limiter.time-window", () -> 1000);
     }

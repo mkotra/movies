@@ -37,7 +37,7 @@ public class MovieService {
 
         boolean isAllWildcard = title.chars().allMatch(ch -> ch == '%');
         SearchType searchType = isAllWildcard ? SearchType.ALL_WILDCARD
-                : title.startsWith("%") ? SearchType.TITLE_REVERSED
+                : (title.startsWith("%") && !title.endsWith("%")) ? SearchType.TITLE_REVERSED
                 : SearchType.TITLE_NORMAL;
 
         Page<MovieDB> movieDBPage = switch (searchType) {

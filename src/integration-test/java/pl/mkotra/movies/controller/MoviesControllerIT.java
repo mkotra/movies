@@ -92,4 +92,16 @@ class MoviesControllerIT extends BaseIT {
         mockMvc.perform(get("/movies/{id}", 1))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void moviesSearchReturnsValidResponse() throws Exception {
+
+        mockMvc.perform(get("/movies")
+                        .with(httpBasic(USER, PASSWORD))
+                        .param("name", "*Godfather*")
+                        .param("page", "0")
+                        .param("page_size", "10"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
