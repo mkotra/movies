@@ -30,6 +30,7 @@ spring:
             directory:
               type: local-filesystem
               root: .lucene-index
+    open-in-view: false
 
   liquibase:
     enabled: true

@@ -15,6 +15,7 @@ security:
 paths:
   /actors:
     get:
+      operationId: actorsGet
       summary: Retrieve a list of actors
       description: >
         The list is ordered by actor name, ascending.
@@ -60,6 +61,7 @@ paths:
           description: Too many requests. Rate limit exceeded.
   '/actors/{id}':
     get:
+      operationId: actorsIdGet
       summary: Retrieve an actor
       description: >
         A global (common for all endpoints) rate limit of 5 requests per minute
@@ -85,6 +87,7 @@ paths:
           description: Too many requests. Rate limit exceeded.
   '/actors/{id}/appearances':
     get:
+      operationId: actorsIdAppearancesGet
       summary: Retrieve a list of appearances for an actor
       description: >
         The list is ordered by movie name, ascending.
@@ -130,6 +133,7 @@ paths:
           description: Too many requests. Rate limit exceeded.
   /movies:
     get:
+      operationId: moviesGet
       summary: Retrieve a list of movies
       description: >
         The list is ordered by movie name, ascending.
@@ -175,6 +179,7 @@ paths:
           description: Too many requests. Rate limit exceeded.
   '/movies/{id}':
     get:
+      operationId: moviesIdGet
       summary: Retrieve a movie
       produces:
         - application/json

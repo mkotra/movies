@@ -199,7 +199,6 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>7.11.0</version>
-
                 <executions>
                     <execution>
                         <id>generate-api</id>
@@ -216,7 +215,7 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <openApiNullable>false</openApiNullable>
-                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <verbose>false</verbose>
                             </configOptions>
                         </configuration>
                     </execution>
