@@ -166,4 +166,4 @@ WHERE table_schema = 'movies_db'
 
 A possible solution to improve query performance is to use **Hibernate Search** backed by Apache Lucene.
 
-[![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/spring/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/mkotra/movies/actions/workflows/maven.yml/badge.svg)](https://github.com/mkotra/movies/actions/workflows/maven.yml)
