@@ -36,9 +36,6 @@
         <maven.jacoco.plugin.version>0.8.12</maven.jacoco.plugin.version>
         <maven.git-commit-id.plugin.version>8.0.2</maven.git-commit-id.plugin.version>
         <maven.versions.plugin.version>2.16.2</maven.versions.plugin.version>
-
-        <surefire.parallel>none</surefire.parallel>
-        <failsafe.parallel>none</failsafe.parallel>
     </properties>
 
     <dependencies>

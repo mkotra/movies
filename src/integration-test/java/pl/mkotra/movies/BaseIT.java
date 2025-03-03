@@ -36,6 +36,12 @@ public abstract class BaseIT {
     @Autowired
     protected MockMvc mockMvc;
 
+    protected void cleanupTables() {
+        jdbcTemplate.execute("TRUNCATE TABLE appearances;");
+        jdbcTemplate.execute("TRUNCATE TABLE actors;");
+        jdbcTemplate.execute("TRUNCATE TABLE movies;");
+    }
+
     @DynamicPropertySource
     public static void testProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", MARIADB::getJdbcUrl);
