@@ -2,7 +2,9 @@ package pl.mkotra.movies.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.mkotra.movies.BaseIT;
+import pl.mkotra.movies.core.CacheService;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -13,9 +15,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MoviesControllerIT extends BaseIT {
 
+    @Autowired
+    private CacheService cacheService;
+
     @BeforeEach
     void setupDatabase() {
+        cacheService.invalidate(CacheService.CacheKey.ACTORS_COUNT);
+        cacheService.invalidate(CacheService.CacheKey.MOVIES_COUNT);
         cleanupTables();
+
         jdbcTemplate.execute("INSERT INTO movies (id, title, title_reversed, year) VALUES (1, 'The Godfather', REVERSE('The Godfather'), '1972');");
         jdbcTemplate.execute("INSERT INTO movies (id, title, title_reversed, year) VALUES (2, 'The Shawshank Redemption', REVERSE('The Shawshank Redemption'), '1994');");
     }
