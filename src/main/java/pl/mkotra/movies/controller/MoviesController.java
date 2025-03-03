@@ -46,8 +46,8 @@ class MoviesController implements MoviesApi {
     }
 
     @Timed(value = "movies.search", description = "Time taken to search movies")
-    @GetMapping("search")
-    public ResponseEntity<List<Movie>> moviesSearch(@Min(0) @RequestParam(defaultValue = "0") Integer page, @Min(1) @Max(1000) @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "*") String name) {
+    @GetMapping("/movies/search")
+    public ResponseEntity<List<Movie>> moviesSearch(@Min(0) @RequestParam(defaultValue = "0") Integer page, @Min(1) @Max(1000) @RequestParam(name = "page_size", defaultValue = "10") Integer pageSize, @RequestParam(defaultValue = "*") String name) {
         Page<Movie> moviePage = searchService.searchMovies(name, page, pageSize);
 
         return ResponseEntity.ok()

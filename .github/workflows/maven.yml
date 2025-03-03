@@ -28,4 +28,20 @@ jobs:
         distribution: 'corretto'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B verify --file pom.xml
+
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: |
+          target/failsafe-reports
+          target/surefire-reports
+
+    - name: Upload JaCoCo Coverage Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-reports
+        path: |
+          target/site/jacoco-unit-test-coverage-report
+          target/site/jacoco-integration-test-coverage-report
